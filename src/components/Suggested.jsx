@@ -38,7 +38,7 @@ export default function Suggested() {
   ];
 
   return (
-    <div className="w-[300px] bg-white rounded-2xl border border-gray-100 p-4 shadow-sm mt-3">
+    <div className="w-[300px] sticky top-[84px] z-40 bg-white rounded-2xl h-fit border border-gray-100 p-4 shadow-sm mt-3">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2 text-gray-800 font-semibold text-sm">
