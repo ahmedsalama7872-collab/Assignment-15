@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import { UserContext } from './UserContext.jsx';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "flowbite-react";
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -30,18 +31,19 @@ import { Dropdown, DropdownItem } from "flowbite-react";
 import axios from 'axios';
 
 export default function PostCard({ post }) {
+  const [openModal, setOpenModal] = useState(false);
+  const [shareBody, setShareBody] = useState(""); 
+  const [sharesCount, setSharesCount] = useState(post.sharesCount || 0); // جعل عداد الشير Dynamic للزيادة فوراً
   const { user } = useContext(UserContext);
   
-  const { body, image, privacy, createdAt, sharesCount = 0, commentsCount = 0 } = post;
+  const { body, image, privacy, createdAt, commentsCount = 0 } = post;
 
   const [likesArray, setLikesArray] = useState(post.likes || []);
 
   const isLiked = likesArray.includes(user?._id);
 
   async function handleLike() {
-
     try {
-     
       setLikesArray(prevLikes => {
         if (prevLikes.includes(user._id)) {
           return prevLikes.filter(id => id !== user._id);
@@ -62,6 +64,33 @@ export default function PostCard({ post }) {
     } catch (error) {
       console.log("Error liking post:", error.response?.data || error.message);
       setLikesArray(post.likes || []);
+    }
+  }
+
+  // ربط شير البوست بالـ API المطلوب
+  async function handleShareSubmit() {
+    try {
+      // تحديث شكلي سريع لعداد الشير
+      setSharesCount(prev => prev + 1);
+      setOpenModal(false);
+const requestBody = shareBody.trim() === "" ? " " : shareBody;
+      await axios.post(
+        `https://route-posts.routemisr.com/posts/${post._id}/share`,
+        {
+          body:requestBody // النص المكتوب مع المشاركة
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`
+          }
+        }
+      );
+
+      setShareBody(""); // تفريغ الحقل بعد النجاح
+    } catch (error) {
+      console.log("Error sharing post:", error.response?.data || error.message);
+      // لو حصل خطأ نرجع العداد زي ما كان
+      setSharesCount(prev => prev - 1);
     }
   }
 
@@ -187,7 +216,6 @@ export default function PostCard({ post }) {
           <span className='bg-blue-600 text-white p-1 rounded-full text-[10px]'>
             <ThumbsUp className='w-3 h-3' />
           </span>
-          {/* عرض طول المصفوفة الحقيقي المحدث */}
           <span className='font-medium text-gray-700'>{likesArray.length} likes</span>
         </div>
         <div className='flex items-center gap-3'>
@@ -212,7 +240,7 @@ export default function PostCard({ post }) {
           <MessageCircle className='w-4 h-4' />
           <span>Comment</span>
         </button>
-        <button className='flex items-center justify-center gap-2 py-1.5 hover:bg-gray-50 rounded-xl text-gray-600 text-xs font-medium transition-colors cursor-pointer'>
+        <button onClick={() => setOpenModal(true)} className='flex items-center justify-center gap-2 py-1.5 hover:bg-gray-50 rounded-xl text-gray-600 text-xs font-medium transition-colors cursor-pointer'>
           <Share2 className='w-4 h-4' />
           <span>Share</span>
         </button>
@@ -240,6 +268,46 @@ export default function PostCard({ post }) {
           </button>
         </div>
       ) : ''}
+
+      {/* Share Modal */}
+      <Modal dismissible show={openModal} onClose={() => setOpenModal(false)} size="lg">
+        <ModalHeader className="border-b border-gray-100 pb-3">Share post</ModalHeader>
+        <ModalBody className="p-4 space-y-4">
+          <textarea
+            rows="3"
+            value={shareBody}
+            onChange={(e) => setShareBody(e.target.value)}
+            placeholder="Say something about this..."
+            className="w-full resize-none border border-gray-200 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm text-gray-800"
+          ></textarea>
+
+          <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white p-4 space-y-3">
+            <div className='flex items-center gap-3'>
+              <img src={post?.user?.photo} className='w-9 h-9 rounded-full object-cover' alt={post?.user?.name} />
+              <div>
+                <h4 className='font-bold text-sm text-gray-900'>{post?.user?.name}</h4>
+                <span className='text-xs text-gray-400'>@{post?.user?.username}</span>
+              </div>
+            </div>
+
+            {body && <p className='text-sm text-gray-800'>{body}</p>}
+
+            {image && (
+              <div className="rounded-xl overflow-hidden max-h-60">
+                <img src={image} className='w-full h-full object-cover' alt="Post media" />
+              </div>
+            )}
+          </div>
+        </ModalBody>
+        <ModalFooter className="border-t border-gray-100 pt-3 flex justify-end gap-2">
+          <Button color="gray" className="rounded-xl px-4 py-1 text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 border-none" onClick={() => setOpenModal(false)}>
+            Cancel
+          </Button>
+          <Button className="rounded-xl px-4 py-1 text-sm font-medium bg-blue-600 text-white hover:bg-blue-700" onClick={handleShareSubmit}>
+            Share now
+          </Button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 }
