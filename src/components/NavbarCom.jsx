@@ -8,16 +8,17 @@ import {
   NavbarBrand,
 } from "flowbite-react";
 import { useContext } from "react";
+import { useNotifications } from "./NotificationContext.jsx";
 import { UserContext } from "./UserContext.jsx";
 import avatar from "../assets/default-profile.png";
 import brand from "../assets/route.png";
 import { NavLink, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faHomeAlt, faUserAlt } from "@fortawesome/free-solid-svg-icons";
-import { faComment } from "@fortawesome/free-regular-svg-icons";
-import { Settings } from "lucide-react";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { Settings,MessageCircle,User,House } from "lucide-react";
 
 export default function NavbarCom() {
+  const { counter, getNotCount } = useNotifications();
   const {user} = useContext(UserContext)
   return (
     <div className="w-full sticky top-0 z-50 bg-white">
@@ -47,10 +48,10 @@ export default function NavbarCom() {
             }
           >
             {/* تم تصحيح المسار هنا ليطابق /app/profile */}
-            <Link to={'/app/profile'}><DropdownItem className="rounded-lg"><FontAwesomeIcon icon={faUserAlt} className="me-2" /> Profile</DropdownItem></Link>
+            <Link to={'/app/profile'}><DropdownItem className="rounded-lg"><User className="w-5 h-5 me-2" /> Profile</DropdownItem></Link>
             
             {/* تم تصحيح المسار هنا ليطابق /app/settings */}
-            <Link to={'/app/settings'}><DropdownItem className="rounded-lg"><Settings className="me-2 w-4" /> Settings</DropdownItem></Link>
+            <Link to={'/app/settings'}><DropdownItem className="rounded-lg"><Settings className="me-2 w-5 h-5" /> Settings</DropdownItem></Link>
             
             <DropdownDivider />
             <DropdownItem className="text-red-600 rounded-lg hover:bg-[#FFF1F2]">Logout</DropdownItem>
@@ -64,7 +65,7 @@ export default function NavbarCom() {
               isActive ? "relative flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-sm font-extrabold transition sm:gap-2 sm:px-3.5 bg-white text-[#1f6fe5]" : "relative flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-sm font-extrabold transition sm:gap-2 sm:px-3.5 text-slate-600 hover:bg-white/90 hover:text-slate-900"
             }
           >
-            <FontAwesomeIcon icon={faHomeAlt} className="text-lg" />
+            <House className="text-lg w-5 h-5" />
             <span className="hidden sm:inline">Feed</span>
           </NavLink>
 
@@ -74,7 +75,7 @@ export default function NavbarCom() {
               isActive ? "relative flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-sm font-extrabold transition sm:gap-2 sm:px-3.5 bg-white text-[#1f6fe5]" : "relative flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-sm font-extrabold transition sm:gap-2 sm:px-3.5 text-slate-600 hover:bg-white/90 hover:text-slate-900"
             }
           >
-            <FontAwesomeIcon icon={faUserAlt} className="text-lg" />
+            <User className="text-lg w-5 h-5" />
             <span className="hidden sm:inline">Profile</span>
           </NavLink>
 
@@ -84,7 +85,11 @@ export default function NavbarCom() {
               isActive ? "relative flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-sm font-extrabold transition sm:gap-2 sm:px-3.5 bg-white text-[#1f6fe5]" : "relative flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-sm font-extrabold transition sm:gap-2 sm:px-3.5 text-slate-600 hover:bg-white/90 hover:text-slate-900"
             }
           >
-            <FontAwesomeIcon icon={faComment} className="text-lg" />
+            <div className="relative">
+
+            <MessageCircle className="text-lg w-5 h-5 " />
+            <span className="absolute -right-2 -top-2 inline-flex min-w-[16px] items-center justify-center rounded-full bg-[#ef4444] px-1 text-[10px] font-black leading-4 text-white">{counter}</span>
+            </div>
             <span className="hidden sm:inline">Notifications</span>
           </NavLink>
         </div>

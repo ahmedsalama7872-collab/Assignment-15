@@ -96,7 +96,7 @@ const [counter,setCounter]=useState(0)
 
   return (
     <div>
-      <NavbarCom />
+      <NavbarCom/>
 
       <div className="mx-auto max-w-7xl py-4">
         <div className="rounded-xl border border-slate-200 bg-white shadow-sm sm:rounded-2xl">
