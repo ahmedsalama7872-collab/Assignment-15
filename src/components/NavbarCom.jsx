@@ -7,6 +7,8 @@ import {
   Navbar,
   NavbarBrand,
 } from "flowbite-react";
+import { useContext } from "react";
+import { UserContext } from "./UserContext.jsx";
 import avatar from "../assets/default-profile.png";
 import brand from "../assets/route.png";
 import { NavLink, Link } from "react-router-dom";
@@ -16,16 +18,17 @@ import { faComment } from "@fortawesome/free-regular-svg-icons";
 import { Settings } from "lucide-react";
 
 export default function NavbarCom() {
+  const {user} = useContext(UserContext)
   return (
     <div className="w-full sticky top-0 z-50 bg-white">
-      <Navbar className="dark:bg-white  flex mx-auto max-w-7xl items-center justify-between gap-2 px-2 py-1.5 sm:gap-3 sm:px-3 [&>div]:max-w-none [&>div]:w-full">
+      <Navbar className="dark:bg-white  flex mx-auto max-w-7xl items-center justify-between gap-2 px-4 py-1.5 sm:gap-3 sm:px-0 [&>div]:max-w-none [&>div]:w-full">
         <NavbarBrand>
           <img
             src={brand}
             className="mr-3 h-9 rounded-xl"
             alt="Route Posts Logo"
           />
-          <span className="self-center whitespace-nowrap text-xl font-bold dark:text-black">
+          <span className="hidden sm:block self-center whitespace-nowrap text-xl font-bold dark:text-black">
             Route Posts
           </span>
         </NavbarBrand>
@@ -36,9 +39,9 @@ export default function NavbarCom() {
             arrowIcon={false}
             inline
             label={
-              <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2 py-1.5 transition hover:bg-slate-100 cursor-pointer">
-                <Avatar alt="User settings" img={avatar} rounded className="w-8 h-8 object-cover" />
-                <span className="hidden max-w-[140px] truncate text-sm font-semibold text-slate-800 md:block">Ahmed Salama</span>
+              <div className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-1 transition hover:bg-slate-100 cursor-pointer">
+                <Avatar size="sm" alt="User settings" img={avatar} rounded className="rounded-full object-cover" />
+                <span className="hidden max-w-[140px] truncate text-sm font-semibold text-slate-800 md:block">{user?.name}</span>
                 <FontAwesomeIcon icon={faBars} className="text-slate-500" />
               </div>
             }
