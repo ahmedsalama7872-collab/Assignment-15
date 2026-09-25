@@ -15,3 +15,9 @@ color:#00298d ;
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
 background-color: white;
  }
+
+
+
+ #imgPreview{
+    width: 1600px; height: 1600px; max-width: none; max-height: none; transform: translate(calc(-50% + 0px), calc(-50% + 0px)) scale(0.2); transform-origin: center center;
+ }

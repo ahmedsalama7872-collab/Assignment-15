@@ -68,7 +68,7 @@ export default function NewPost() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="mb-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-center gap-2">
-          <img src={avatar} className="w-12 rounded-full" alt={user?.name} />
+          <img src={user?.photo?user.photo:avatar} className="w-12 rounded-full" alt={user?.name} />
 
           <div className="space-y-2">
             <h2 className="font-bold">{user?.name}</h2>

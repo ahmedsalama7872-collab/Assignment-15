@@ -53,8 +53,8 @@ export default function Suggested() {
 
       <div
         className={`${
-          sugMenu ? "block" : "hidden"
-        } lg:block lg:w-[300px] sticky top-[84px] z-40 bg-white rounded-2xl h-fit border border-gray-100 p-4 shadow-sm mt-3`}
+          sugMenu ? "sticky" : "hidden"
+        }  lg:w-[300px] lg:block sticky top-[84px] z-40 bg-white rounded-2xl h-fit border border-gray-100 p-4 shadow-sm mt-3`}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">

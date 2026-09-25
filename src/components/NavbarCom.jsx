@@ -50,17 +50,17 @@ function handleLogout(){
             inline
             label={
               <div className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-1 transition hover:bg-slate-100 cursor-pointer">
-                <Avatar size="sm" alt="User settings" img={avatar} rounded className="rounded-full object-cover" />
+                <Avatar size="sm" alt="User settings" img={user?.photo?user.photo:avatar} rounded className="rounded-full object-cover" />
                 <span className="hidden max-w-[140px] truncate text-sm font-semibold text-slate-800 md:block">{user?.name}</span>
                 <FontAwesomeIcon icon={faBars} className="text-slate-500" />
               </div>
             }
           >
             {/* تم تصحيح المسار هنا ليطابق /app/profile */}
-            <Link to={'/app/profile'}><DropdownItem className="rounded-lg"><User className="w-5 h-5 me-2" /> Profile</DropdownItem></Link>
+            <Link to={'/profile'}><DropdownItem className="rounded-lg"><User className="w-5 h-5 me-2" /> Profile</DropdownItem></Link>
             
             {/* تم تصحيح المسار هنا ليطابق /app/settings */}
-            <Link to={'/app/settings'}><DropdownItem className="rounded-lg"><Settings className="me-2 w-5 h-5" /> Settings</DropdownItem></Link>
+            <Link to={'/settings'}><DropdownItem className="rounded-lg"><Settings className="me-2 w-5 h-5" /> Settings</DropdownItem></Link>
             
             <DropdownDivider />
             <DropdownItem onClick={()=>handleLogout()} className="text-red-600 rounded-lg hover:bg-[#FFF1F2]">Logout</DropdownItem>
@@ -97,7 +97,7 @@ function handleLogout(){
             <div className="relative">
 
             <MessageCircle className="text-lg w-5 h-5 " />
-            <span className="absolute -right-2 -top-2 inline-flex min-w-[16px] items-center justify-center rounded-full bg-[#ef4444] px-1 text-[10px] font-black leading-4 text-white">{counter}</span>
+            {counter>0?<span className="absolute -right-2 -top-2 inline-flex min-w-[16px] items-center justify-center rounded-full bg-[#ef4444] px-1 text-[10px] font-black leading-4 text-white">{counter}</span>:''}
             </div>
             <span className="hidden sm:inline">Notifications</span>
           </NavLink>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import NewPost from "../components/NewPost";
-import PostCard from "../components/PostCard";
+import PostCard from "../components/PostCard/PostCard.jsx";
 import axios from "axios";
 import { useOutletContext } from "react-router-dom";
 

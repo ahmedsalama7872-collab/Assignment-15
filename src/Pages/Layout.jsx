@@ -11,11 +11,12 @@ export default function Layout() {
   const [bookmarked, setBookmarked] = useState(false)
 
   return (
-    <div>
+    <div className="min-h-screen bg-slate-50">
       <NavbarCom />
 
-      <div className="lg:mx-auto max-w-7xl py-4 grid gap-4 xl:grid-cols-[240px_minmax(0,1fr)_300px] mx-3">
-        <div className="order-1 xl:order-1">
+      {/* شيلنا الـ py-4 وحطينا items-start عشان نظبط الـ Grid */}
+      <div className="mx-auto max-w-7xl px-3 py-4 grid gap-4 xl:grid-cols-[240px_minmax(0,1fr)_300px] items-start">
+        <div className="order-1 xl:order-1 sticky top-[84px]">
           <SidebarCom
             link={link}
             setLink={setLink}
@@ -28,7 +29,7 @@ export default function Layout() {
           <Outlet context={{ link, setLink, bookmarked }} />
         </div>
 
-        <div className="order-2 xl:order-3">
+        <div className="order-2 xl:order-3 sticky top-[84px]">
           <Suggested />
         </div>
       </div>
