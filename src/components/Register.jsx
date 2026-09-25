@@ -21,6 +21,7 @@ export default function Register() {
             if (data.success && data.data?.token) {
                 localStorage.setItem("userToken", data.data.token);
                 navigate('/app/feed');
+                window.location.reload()
                 console.log("success");
                 
             }

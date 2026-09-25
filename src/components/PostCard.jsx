@@ -33,12 +33,15 @@ import axios from 'axios';
 export default function PostCard({ post }) {
   const [openModal, setOpenModal] = useState(false);
   const [shareBody, setShareBody] = useState(""); 
-  const [sharesCount, setSharesCount] = useState(post.sharesCount || 0); // جعل عداد الشير Dynamic للزيادة فوراً
+  const [commentsOpenned, setCommentsOpenned] = useState(false); 
+  const [commentAPI, setCommentAPI] = useState(5); 
+  const [sharesCount, setSharesCount] = useState(post.sharesCount || 0); 
   const { user } = useContext(UserContext);
   
   const { body, image, privacy, createdAt, commentsCount = 0 } = post;
 
   const [likesArray, setLikesArray] = useState(post.likes || []);
+  const [commentsArray, setCommentsArray] = useState([]);
 
   const isLiked = likesArray.includes(user?._id);
 
@@ -64,6 +67,25 @@ export default function PostCard({ post }) {
     } catch (error) {
       console.log("Error liking post:", error.response?.data || error.message);
       setLikesArray(post.likes || []);
+    }
+  }
+  async function getComments() {
+    try {
+     
+
+      const {data} = await axios.get(
+        `https://route-posts.routemisr.com/posts/${post._id}/comments?page=1&limit=${commentAPI}`,
+        
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`
+          }
+        }
+      );
+setCommentsArray(data.data.comments)
+    } catch (error) {
+      console.log("Error getting comments post:", error.response?.data || error.message);
+     
     }
   }
 
@@ -236,7 +258,7 @@ const requestBody = shareBody.trim() === "" ? " " : shareBody;
           <ThumbsUp className='w-4 h-4' />
           <span>Like</span>
         </button>
-        <button className='flex items-center justify-center gap-2 py-1.5 hover:bg-gray-50 rounded-xl text-gray-600 text-xs font-medium transition-colors cursor-pointer'>
+        <button onClick={()=>{setCommentsOpenned(!commentsOpenned);getComments()}} className='flex items-center justify-center gap-2 py-1.5 hover:bg-gray-50 rounded-xl text-gray-600 text-xs font-medium transition-colors cursor-pointer'>
           <MessageCircle className='w-4 h-4' />
           <span>Comment</span>
         </button>
@@ -246,7 +268,7 @@ const requestBody = shareBody.trim() === "" ? " " : shareBody;
         </button>
       </div>
 
-      {post.topComment ? (
+      {post.topComment&&!commentsOpenned ? (
         <div className='m-5 bg-gray-50/70 p-3 rounded-2xl border border-gray-100/80 mt-3'>
           <span className='text-[10px] font-bold tracking-wider text-gray-400 uppercase block mb-2'>
             TOP COMMENT
@@ -263,11 +285,73 @@ const requestBody = shareBody.trim() === "" ? " " : shareBody;
               {post.topComment?.image ? <img src={post.topComment?.image} alt="" className='w-full object-cover max-h-44 mt-2 rounded-lg'/> : ''}
             </div>
           </div>
-          <button className='text-xs text-blue-600 font-semibold mt-2.5 hover:underline block'>
+          <button onClick={()=>{setCommentsOpenned(!commentsOpenned);getComments()}} className='cursor-pointer text-xs text-blue-600 font-semibold mt-2.5 hover:underline block'>
             View all comments
           </button>
         </div>
       ) : ''}
+
+      {
+        commentsOpenned? (
+        <div className='border-t border-slate-200 bg-[#f7f8fa] px-4 py-4'>
+            <div className='mb-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2'>
+              <div className='flex items-center gap-2'>
+                <p className='text-sm font-extrabold  tracking-wide text-slate-700'>Comments</p>
+                <span className='rounded-full bg-[#e7f3ff] px-2 py-0.5 text-[11px] font-bold text-[#1877f2]'>{commentsCount}</span>
+              </div>
+              <select name="" className='rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-bold text-slate-700 outline-none ring-[#1877f2]/20 focus:border-[#1877f2] focus:bg-white focus:ring-2' id="">
+              <option value="relevant">Most relevant</option>
+              <option value="newest">Newest</option>
+              </select>
+            </div>
+            <div className='space-y-2'>
+
+             {commentsArray?.map((comment)=>{
+              return (
+                 <div key={comment._id} className='relative flex items-start gap-2'>
+                <img src={comment.commentCreator.photo} alt="" className='mt-0.5 h-8 w-8 rounded-full object-cover' />
+                <div className='min-w-0 flex-1'>
+                  <div className='relative inline-block max-w-full rounded-2xl bg-[#f0f2f5] px-3 py-2'>
+                    <div className='flex items-start justify-between gap-2'>
+                      <div>
+                        <p className='text-xs font-bold text-slate-900'>{comment.commentCreator.name}</p>
+                        <p className='text-xs text-slate-500'>@{comment.commentCreator.username}</p>
+                      </div>
+                    </div>
+                    <p className='mt-1 whitespace-pre-wrap text-sm text-slate-800'>{comment.content}</p>
+                  </div>
+                  <div className='mt-1.5 flex items-center justify-between px-1'>
+                    <div className='flex items-center gap-4'>
+                      <span className='text-xs font-semibold text-slate-400'>
+                        {dayjs(comment.createdAt).fromNow()}
+                      </span>
+                      <button className='text-xs font-semibold hover:underline disabled:opacity-60 text-slate-500'>
+                        <span>Like {comment.likes.length}</span>
+                      </button>
+                      <button className='text-xs font-semibold transition hover:underline disabled:opacity-60 text-slate-500 hover:text-[#1877f2]'>
+                        Reply
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              )
+             })
+
+
+
+}
+
+{commentsCount>5?<div className='pt-2 text-center'>
+  <button onClick={()=>{setCommentAPI(commentAPI+5);getComments()}} className='rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-100 disabled:opacity-60'>
+    View more comments
+  </button>
+</div>:''}
+
+            </div>
+        </div>
+        )
+      :''}
 
       {/* Share Modal */}
       <Modal dismissible show={openModal} onClose={() => setOpenModal(false)} size="lg">

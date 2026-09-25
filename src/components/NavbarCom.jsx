@@ -12,12 +12,21 @@ import { useNotifications } from "./NotificationContext.jsx";
 import { UserContext } from "./UserContext.jsx";
 import avatar from "../assets/default-profile.png";
 import brand from "../assets/route.png";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { Settings,MessageCircle,User,House } from "lucide-react";
 
 export default function NavbarCom() {
+     const navigate = useNavigate();
+
+function handleLogout(){
+  localStorage.removeItem("userToken");
+  navigate('/login')
+}
+
+
+
   const { counter, getNotCount } = useNotifications();
   const {user} = useContext(UserContext)
   return (
@@ -54,7 +63,7 @@ export default function NavbarCom() {
             <Link to={'/app/settings'}><DropdownItem className="rounded-lg"><Settings className="me-2 w-5 h-5" /> Settings</DropdownItem></Link>
             
             <DropdownDivider />
-            <DropdownItem className="text-red-600 rounded-lg hover:bg-[#FFF1F2]">Logout</DropdownItem>
+            <DropdownItem onClick={()=>handleLogout()} className="text-red-600 rounded-lg hover:bg-[#FFF1F2]">Logout</DropdownItem>
           </Dropdown>
         </div>
 
