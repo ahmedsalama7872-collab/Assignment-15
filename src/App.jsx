@@ -8,19 +8,27 @@ import Notifications from "./Pages/Notifications";
 import Auth from "./Pages/auth";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import PostPreview from "./components/PostPreview";
+import Settings from "./Pages/Settings";
 
 const routes = createBrowserRouter([
-  // 1. مسارات المصادقة (تسجيل الدخول وإنشاء حساب)
+  // Authentication
   {
-    path: '/',
+    path: "/",
     element: <Auth />,
-    children:[
-      { path: 'login', element: <Login /> },
-      { path: 'register', element: <Register /> }
-    ]
+    children: [
+      {
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "register",
+        element: <Register />,
+      },
+    ],
   },
 
-  // 2. مسارات التطبيق الرئيسية المرتبطة بالـ Layout (مثل الفيد والإعدادات)
+  // Main App
   {
     path: "/app",
     element: <Layout />,
@@ -33,21 +41,30 @@ const routes = createBrowserRouter([
         path: "feed",
         element: <Feed />,
       },
-     
     ],
   },
 
-  // 3. مسارات البروفايل المستقلة (خارج الـ Layout)
+  // Post Preview - مستقل عن Layout
+  {
+    path: "/PostPreview/:id",
+    element: <PostPreview />,
+  },
+
+  // Profile
   {
     path: "/profile",
     element: <Profile />,
+  },
+  {
+    path: "/settings",
+    element: <Settings />,
   },
   {
     path: "/profile/:id",
     element: <Profile />,
   },
 
-  // 4. مسار الإشعارات المستقل (خارج الـ Layout)
+  // Notifications
   {
     path: "/notifications",
     element: <Notifications />,

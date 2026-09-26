@@ -12,11 +12,13 @@ import {
 } from "lucide-react";
 import { Dropdown, DropdownItem } from "flowbite-react";
 
-export default function PostHeader({ post }) {
+export default function PostHeader({ post,handleSave,saved }) {
   const { user, privacy, createdAt, body } = post;
 
   const isProfilePictureUpdate =
     body?.trim() === "updated profile picture.";
+  const isCoverUpdate =
+    body?.trim() === "updated cover photo.";
 
   return (
     <div className="flex p-5 pb-0 items-start justify-between">
@@ -37,6 +39,11 @@ export default function PostHeader({ post }) {
             {isProfilePictureUpdate && (
               <span className="text-sm text-gray-500">
                 updated profile picture.
+              </span>
+            )}
+            {isCoverUpdate && (
+              <span className="text-sm text-gray-500">
+                updated cover photo.
               </span>
             )}
           </div>
@@ -106,13 +113,13 @@ export default function PostHeader({ post }) {
             <MoreHorizontal className="w-5 h-5" />
           </button>
         )}
-        dismissOnClick={false}
+        dismissOnClick={true}
         className="rounded-2xl shadow-lg border border-gray-100 p-1 w-48"
         placement="bottom-end"
       >
-        <DropdownItem className="flex items-center gap-2.5 py-2 px-3 text-gray-700 font-medium rounded-xl hover:bg-gray-100">
+        <DropdownItem onClick={()=>handleSave()} className="flex items-center gap-2.5 py-2 px-3 text-gray-700 font-medium rounded-xl hover:bg-gray-100">
           <Bookmark className="w-4 h-4 text-gray-500" />
-          <span>Save post</span>
+          <span>{saved?'Unsave Post':'Save Post'}</span>
         </DropdownItem>
 
         <DropdownItem className="flex items-center gap-2.5 py-2 px-3 text-gray-700 font-medium rounded-xl hover:bg-gray-100">

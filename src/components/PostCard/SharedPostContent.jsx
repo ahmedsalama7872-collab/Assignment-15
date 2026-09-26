@@ -1,7 +1,7 @@
 import React from 'react';
 import { SquareArrowOutUpRight } from "lucide-react";
-
-export default function SharedPostContent({ sharedPost }) {
+import { Link } from 'react-router-dom';
+export default function SharedPostContent({post, sharedPost }) {
   if (!sharedPost) return null;
 
   return (
@@ -16,9 +16,10 @@ export default function SharedPostContent({ sharedPost }) {
             </div>
           </div>
         </div>
-        <button className='text-blue-600 hover:underline text-xs font-medium ml-1 cursor-pointer flex items-center gap-1 px-2 py-1 hover:bg-[#E7F3FF] rounded-[10px]'>
+        <Link to={`/PostPreview/${sharedPost._id}`} className='text-blue-600 hover:underline text-xs font-medium ml-1 cursor-pointer flex items-center gap-1 px-2 py-1 hover:bg-[#E7F3FF] rounded-[10px]'>
           Original Post <SquareArrowOutUpRight className='w-3 h-3' />
-        </button>
+        </Link>
+
       </div>
       
       <div className='mt-3 text-gray-800 text-sm px-5 mb-2 font-medium'>

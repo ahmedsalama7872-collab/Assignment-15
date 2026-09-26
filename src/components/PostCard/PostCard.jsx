@@ -2,10 +2,10 @@ import React, { useState, useContext, useEffect } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
+import { Link } from 'react-router-dom';
 import { UserContext } from '../UserContext.jsx';
 import { ThumbsUp, Repeat2, MessageCircle, Share2, Bookmark } from "lucide-react";
 import axios from 'axios';
-
 // استيراد الكومباوننتس الفرعية
 import PostHeader from './PostHeader.jsx';
 import SharedPostContent from './SharedPostContent.jsx';
@@ -33,9 +33,10 @@ dayjs.updateLocale('en', {
   }
 });
 
-export default function PostCard({ post }) {
+export default function PostCard({ post,setPosts }) {
   const [openModal, setOpenModal] = useState(false);
   const [shareBody, setShareBody] = useState(""); 
+const [saved, setSaved] = useState(post.bookmarked || false);
   const [commentsOpenned, setCommentsOpenned] = useState(false); 
   const [commentAPI, setCommentAPI] = useState(5); 
 
@@ -127,22 +128,39 @@ export default function PostCard({ post }) {
       setSharesCount(prev => prev - 1);
     }
   }
+  async function handleSave() {
+    try {
+      
+      
+      await axios.put(`https://route-posts.routemisr.com/posts/${post._id}/bookmark`, {}, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("userToken")}` }
+      });
+      const newSaved = !saved
+       setSaved(newSaved)
+       if(!newSaved){
+        setPosts((posts)=>posts.filter(p=>((p._id || p.id) !== (post._id || post.id))))
+       }
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
 
   return (
     <div className='bg-white rounded-2xl border border-gray-100 shadow-sm mx-auto'>
       {/* 1. Header */}
-      <PostHeader post={post} />
+      <PostHeader post={post} handleSave={handleSave} saved={saved}/>
 
       {/* Post Body Text */}
       <div className='mt-3 text-gray-800 text-sm px-5 mb-2 font-medium'>
-        <p>{body!='updated profile picture.'?body:''}</p>
-        {post.bookmarked && <div className='mt-3 inline-flex items-center gap-1 rounded-full bg-[#e7f3ff] px-2.5 py-1 text-[11px] font-bold text-[#1877f2]'><Bookmark className='w-3 h-3'/> Saved</div>}
+        <p>{body!='updated profile picture.'&&body!='updated cover photo.'?body:''}</p>
+        { saved && <div className='mt-3 inline-flex items-center gap-1 rounded-full bg-[#e7f3ff] px-2.5 py-1 text-[11px] font-bold text-[#1877f2]'><Bookmark className='w-3 h-3'/> Saved</div>}
       </div>
 
       {/* Post Image or Shared Content */}
       <div>
         {image && <img src={image} className='max-h-[620px] w-full object-cover' alt="" />}
-        {post.isShare && post.sharedPost ? <SharedPostContent sharedPost={post.sharedPost} /> : ''}
+        {post.isShare && post.sharedPost ? <SharedPostContent sharedPost={post.sharedPost} post={post} /> : ''}
       </div>
 
       {/* Post Stats Bar (مع زرار View details) */}
@@ -157,8 +175,12 @@ export default function PostCard({ post }) {
           <span className='flex items-center gap-1'><Repeat2 className='w-3 h-3' /> {sharesCount} shares</span>
           <span>•</span>
           <span>{commentsCount} comments</span>
-          <button className='text-blue-600 hover:underline font-medium ml-1 cursor-pointer'>View details</button>
-        </div>
+<Link
+  to={`/PostPreview/${post._id}`}
+  className="text-blue-600 hover:underline font-medium ml-1 cursor-pointer"
+>
+  View details
+</Link>        </div>
       </div>
 
       {/* Action Buttons (Like, Comment, Share) */}
@@ -182,7 +204,6 @@ export default function PostCard({ post }) {
         </button>
       </div>
 
-      {/* Top Comment (يظهر فقط لو الـ topComment موجود وقسم التعليقات مغلق) */}
       {post.topComment && !commentsOpenned ? (
         <div className='m-5 bg-gray-50/70 p-3 rounded-2xl border border-gray-100/80 mt-3'>
           <span className='text-[10px] font-bold tracking-wider text-gray-400 uppercase block mb-2'>
