@@ -3,10 +3,12 @@
 import axios from "axios";
 import { UserPlus, Search, Users } from "lucide-react";
 import { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom";
+import Follow from "./Follow";
 export default function Suggested() {
   const [suggestions, setSuggestions] = useState([]);
   const [sugMenu, setSugMenu] = useState(false);
+  const [profile,setProfile]= useState()
 
   async function getSuggested() {
     try {
@@ -18,26 +20,26 @@ export default function Suggested() {
           },
         }
       );
-
+      
       console.log("API Response:", data);
-
+      
       const usersList = data.data.suggestions;
       setSuggestions(usersList);
     } catch (err) {
       console.log(err);
     }
   }
-
+  
   useEffect(() => {
     getSuggested();
   }, []);
-
+  
   return (
     <div>
       <button
         onClick={() => setSugMenu(!sugMenu)}
         className="inline-flex w-full lg:hidden items-center cursor-pointer justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left shadow-sm"
-      >
+        >
         <span className="inline-flex items-center gap-2 text-sm font-extrabold text-slate-900">
           <Users className="w-4 h-4 text-blue-600" /> Suggested Friends
         </span>
@@ -55,7 +57,7 @@ export default function Suggested() {
         className={`${
           sugMenu ? "sticky" : "hidden"
         }  lg:w-[300px] lg:block sticky top-[84px] z-40 bg-white rounded-2xl h-fit border border-gray-100 p-4 shadow-sm mt-3`}
-      >
+        >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2 text-gray-800 font-semibold text-sm">
@@ -76,36 +78,40 @@ export default function Suggested() {
             type="text"
             placeholder="Search friends..."
             className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-100 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:bg-white transition-all"
-          />
+            />
         </div>
 
         {/* List */}
         <div className="space-y-2.5">
-          {suggestions.map((user) => (
+          {suggestions.map((user) => {
+            return(
             <div
-              key={user._id || user.id}
-              className="p-2.5 border border-gray-100 rounded-xl hover:border-gray-200 transition-all bg-white"
+            key={user._id || user.id}
+            className="p-2.5 border border-gray-100 rounded-xl hover:border-gray-200 transition-all bg-white"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5 overflow-hidden">
+                 <Link to={`/profile/${user._id}`}>
                   <img
                     src={user.photo}
                     alt={user.name}
                     className="w-9 h-9 rounded-full object-cover flex-shrink-0"
-                  />
+                    />
+                    </Link>
                   <div className="min-w-0">
+                    <Link to={`/profile/${user._id}`}>
                     <h4 className="text-xs font-semibold text-gray-900 truncate">
                       {user.name}
                     </h4>
+                    </Link>
+                    <Link to={`/profile/${user._id}`}>
                     <p className="text-[11px] text-gray-400 truncate">
                       @{user.username}
                     </p>
+                    </Link>
                   </div>
                 </div>
-                <button className="flex items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-medium px-3 py-1.5 rounded-xl transition-colors flex-shrink-0">
-                  <UserPlus className="w-3.5 h-3.5" />
-                  <span>Follow</span>
-                </button>
+                <Follow userID={user._id} setProfile={setProfile} profile={profile}/>
               </div>
 
               <div className="mt-2 hidden lg:flex items-center gap-1.5 text-[10px] text-gray-500 font-medium">
@@ -114,9 +120,9 @@ export default function Suggested() {
                 </span>
               </div>
             </div>
-          ))}
+          )})}
         </div>
-
+        
         {/* View more */}
         <div className="mt-3 pt-2 border-t border-gray-50">
           <button className="w-full py-2 bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-semibold rounded-xl transition-colors text-center">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import EmojiPicker from "emoji-picker-react";
 import { Image, Smile, SendHorizonal, X } from "lucide-react";
+import { Link } from 'react-router-dom';
 
 export default function CommentSection({
   post,
@@ -39,11 +40,17 @@ export default function CommentSection({
       <div className='space-y-2'>
         {commentsArray?.map((comment) => (
           <div key={comment._id} className='relative flex items-start gap-2'>
+            <Link to={`/profile/${user._id}`}>
             <img src={comment.commentCreator.photo} alt="" className='mt-0.5 h-8 w-8 rounded-full object-cover' />
+            </Link>
             <div className='min-w-0 flex-1'>
               <div className='relative inline-block max-w-full rounded-2xl bg-[#f0f2f5] px-3 py-2'>
+            <Link to={`/profile/${user._id}`}>
                 <p className='text-xs font-bold text-slate-900'>{comment.commentCreator.name}</p>
+            </Link>
+            <Link to={`/profile/${user._id}`}>
                 <p className='text-xs text-slate-500'>@{comment.commentCreator.username} • {dayjs(comment.createdAt).fromNow()}</p>
+            </Link>
                 {comment.content && <p className='mt-1 whitespace-pre-wrap text-sm text-slate-800'>{comment.content}</p>}
                 {comment.image && <img src={comment.image} alt="" className='mt-2 max-h-44 rounded-lg object-cover w-full' />}
               </div>

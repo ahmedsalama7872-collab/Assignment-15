@@ -1,50 +1,65 @@
 import React, { useEffect, useState } from "react";
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import updateLocale from 'dayjs/plugin/updateLocale';
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import updateLocale from "dayjs/plugin/updateLocale";
 import NavbarCom from "../components/NavbarCom";
-import { Check, CheckCheck, MessageCircle, Heart, UserPlus, Share2 } from "lucide-react";
+import {
+  Check,
+  CheckCheck,
+  MessageCircle,
+  Heart,
+  UserPlus,
+  Share2,
+} from "lucide-react";
 import avatar from "../assets/default-profile.png";
 import axios from "axios";
 import { useNotifications } from "../components/NotificationContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
-dayjs.updateLocale('en', {
+
+dayjs.updateLocale("en", {
   relativeTime: {
     future: "in %s",
-    past: "%s",    
-    s: '1s',        
-    ss: '%ds',
-    m: '1m',        
-    mm: '%dm',      
-    h: '1h',        
-    hh: '%dh',      
-    d: '1d',        
-    dd: '%dd',      
-    M: '1M',        
-    MM: '%dM',      
-    y: '1y',        
-    yy: '%dy'       
-  }
+    past: "%s",
+    s: "1s",
+    ss: "%ds",
+    m: "1m",
+    mm: "%dm",
+    h: "1h",
+    hh: "%dh",
+    d: "1d",
+    dd: "%dd",
+    M: "1M",
+    MM: "%dM",
+    y: "1y",
+    yy: "%dy",
+  },
 });
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [unread, setUnread] = useState(false);
-  
-  // استدعاء العداد ودالة التحديث من الـ Context مباشرة
+
   const { counter, getNotCount } = useNotifications();
+
+  const navigate = useNavigate();
 
   async function markRead(id) {
     try {
       await axios.patch(
         `https://route-posts.routemisr.com/notifications/${id}/read`,
         {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem("userToken")}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        }
       );
+
       getNotifications();
-      getNotCount(); // تحديث العداد في الـ Context ليظهر فوراً في الـ Navbar
+      getNotCount();
     } catch (error) {
       console.log("Error marking as read:", error);
     }
@@ -55,10 +70,15 @@ export default function Notifications() {
       await axios.patch(
         `https://route-posts.routemisr.com/notifications/read-all`,
         {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem("userToken")}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        }
       );
+
       getNotifications();
-      getNotCount(); // تحديث العداد في الـ Context ليظهر فوراً في الـ Navbar
+      getNotCount();
     } catch (error) {
       console.log("Error marking all as read:", error);
     }
@@ -67,11 +87,16 @@ export default function Notifications() {
   async function getNotifications() {
     try {
       const { data } = await axios.get(
-        `https://route-posts.routemisr.com/notifications?${unread ? 'unread=false&' : ''}limit=40`,
+        `https://route-posts.routemisr.com/notifications?${
+          unread ? "unread=false&" : ""
+        }limit=40`,
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("userToken")}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
         }
       );
+
       setNotifications(data.data?.notifications || []);
     } catch (error) {
       console.log("Error fetching notifications:", error);
@@ -87,12 +112,18 @@ export default function Notifications() {
     switch (type) {
       case "comment_post":
         return <MessageCircle className="w-4 h-4" />;
+
       case "like_post":
-        return <Heart className="w-4 h-4 text-red-500 fill-red-500" />;
+        return (
+          <Heart className="w-4 h-4 text-red-500 fill-red-500" />
+        );
+
       case "follow_user":
         return <UserPlus className="w-4 h-4 text-blue-500" />;
+
       case "share_post":
         return <Share2 className="w-4 h-4 text-green-500" />;
+
       default:
         return <MessageCircle className="w-4 h-4" />;
     }
@@ -102,12 +133,16 @@ export default function Notifications() {
     switch (type) {
       case "comment_post":
         return "commented on your post";
+
       case "like_post":
         return "liked your post";
+
       case "follow_user":
         return "followed you";
+
       case "share_post":
         return "shared your post";
+
       default:
         return "interacted with you";
     }
@@ -125,84 +160,143 @@ export default function Notifications() {
                 <h2 className="text-xl font-black text-slate-900 sm:text-2xl">
                   Notifications
                 </h2>
+
                 <p className="mt-1 text-sm text-slate-500">
                   Realtime updates for likes, comments, shares, and follows.
                 </p>
               </div>
-              <button 
-                onClick={() => markAllRead()} 
+
+              <button
+                onClick={() => markAllRead()}
                 className="cursor-pointer inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
               >
-                <CheckCheck className="w-4 h-4" /> mark all as read
+                <CheckCheck className="w-4 h-4" />
+                mark all as read
               </button>
             </div>
+
             <div className="flex mt-6 gap-4 items-center">
-              <button onClick={() => setUnread(false)} className={`rounded-full px-4 py-1.5 text-sm font-bold transition ${!unread ? ' bg-[#1877f2] text-white' : ' bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
+              <button
+                onClick={() => setUnread(false)}
+                className={`cursor-pointer rounded-full px-4 py-1.5 text-sm font-bold transition ${
+                  !unread
+                    ? "bg-[#1877f2] text-white"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                }`}
+              >
                 All
               </button>
-              <button onClick={() => setUnread(true)} className={`rounded-full flex gap-2 px-4 py-1.5 text-sm font-bold transition ${unread ? ' bg-[#1877f2] text-white' : ' bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
+
+              <button
+                onClick={() => setUnread(true)}
+                className={`rounded-full cursor-pointer flex gap-2 px-4 py-1.5 text-sm font-bold transition ${
+                  unread
+                    ? "bg-[#1877f2] text-white"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                }`}
+              >
                 Unread
-                <span className={`rounded-full px-2 ${unread ? 'bg-[#5299F5] text-white' : 'bg-white text-[#5299F5]'}`} >{counter}</span>
+
+                <span
+                  className={`rounded-full px-2 ${
+                    unread
+                      ? "bg-[#5299F5] text-white"
+                      : "bg-white text-[#5299F5]"
+                  }`}
+                >
+                  {counter}
+                </span>
               </button>
             </div>
           </div>
 
-          <div className="space-y-2 p-3 sm:p-4">
-            {notifications.map((no) => {
-              return (
-                <div
-                  key={no._id}
-                  className={`group relative flex gap-3 rounded-xl border p-3 transition sm:rounded-2xl sm:p-4 border-slate-200 ${no.isRead ? 'bg-white hover:bg-slate-50' : 'bg-[#edf4ff]'}`}
-                >
-                  <div className="relative shrink-0">
-                    <button className="block cursor-pointer">
-                      <img
-                        src={no.actor?.photo || avatar}
-                        className="h-11 w-11 rounded-full object-cover"
-                        alt={no.actor?.name || "User"}
-                      />
-                    </button>
-                    <span className="absolute -bottom-1 -right-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white ring-2 ring-white text-[#1877f2]">
-                      {getNotificationIcon(no.type)}
-                    </span>
+          <div className="p-3 sm:p-4">
+            {notifications.map((no) => (
+              <div
+                key={no._id}
+                onClick={() =>
+                  navigate(
+                    no.type === "follow_user"
+                      ? `/profile/${no.entityId}`
+                      : `/PostPreview/${no.entityId}`
+                  )
+                }
+                className={`group mb-2 relative flex gap-3 rounded-xl border p-3 transition cursor-pointer sm:rounded-2xl sm:p-4 border-slate-200 ${
+                  no.isRead
+                    ? "bg-white hover:bg-slate-50"
+                    : "bg-[#edf4ff]"
+                }`}
+              >
+                <div className="relative shrink-0">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/profile/${no.actor._id}`);
+                    }}
+                    className="block cursor-pointer"
+                  >
+                    <img
+                      src={no.actor?.photo || avatar}
+                      className="h-11 w-11 rounded-full object-cover"
+                      alt={no.actor?.name || "User"}
+                    />
+                  </button>
+
+                  <span className="absolute -bottom-1 -right-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white ring-2 ring-white text-[#1877f2]">
+                    {getNotificationIcon(no.type)}
+                  </span>
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-start justify-between gap-1.5 sm:gap-2">
+                    <p className="text-sm leading-6 text-slate-800">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/profile/${no.actor._id}`);
+                        }}
+                        className="font-extrabold cursor-pointer hover:text-[#1877f2] hover:underline"
+                      >
+                        {no.actor?.name}
+                      </button>{" "}
+                      {getNotificationText(no.type)}
+                    </p>
+
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <span className="text-xs font-semibold text-slate-500">
+                        {dayjs(no.createdAt).fromNow()}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-start justify-between gap-1.5 sm:gap-2">
-                      <p className="text-sm leading-6 text-slate-800">
-                        <button className="font-extrabold hover:text-[#1877f2] hover:underline">
-                          {no.actor?.name}{" "}
-                        </button>{" "}
-                        {getNotificationText(no.type)}
-                      </p>
-                      <div className="flex items-center gap-1.5 sm:gap-2">
-                        <span className="text-xs font-semibold text-slate-500">
-                          {dayjs(no.createdAt).fromNow()}
-                        </span>
-                      </div>
-                    </div>
+                  {no.entity?.body && (
+                    <p className="mt-0.5 text-sm text-slate-600">
+                      {no.entity.body}
+                    </p>
+                  )}
 
-                    {no.entity?.body && (
-                      <p className="mt-0.5 text-sm text-slate-600">
-                        {no.entity.body}
-                      </p>
+                  <div className="mt-2 flex items-center gap-2">
+                    {no.isRead ? (
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
+                        <Check className="w-4 h-4" />
+                        Read
+                      </span>
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          markRead(no._id);
+                        }}
+                        className="cursor-pointer inline-flex items-center gap-1.5 rounded-md bg-white px-2.5 py-1 text-xs font-bold text-[#1877f2] ring-1 ring-[#dbeafe] transition hover:bg-[#e7f3ff]"
+                      >
+                        <Check className="w-3 h-3" />
+                        Mark as read
+                      </button>
                     )}
-
-                    <div className="mt-2 flex items-center gap-2">
-                      {no.isRead ? (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-                          <Check className="w-4 h-4" /> Read
-                        </span>
-                      ) : (
-                        <button onClick={() => markRead(no._id)} className="inline-flex items-center gap-1.5 rounded-md bg-white px-2.5 py-1 text-xs font-bold text-[#1877f2] ring-1 ring-[#dbeafe] transition hover:bg-[#e7f3ff]">
-                          <Check className="w-3 h-3" /> Mark as read
-                        </button>
-                      )}
-                    </div>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
       </div>

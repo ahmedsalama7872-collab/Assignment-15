@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext.jsx';
 import { ThumbsUp, Repeat2, MessageCircle, Share2, Bookmark } from "lucide-react";
 import axios from 'axios';
@@ -146,6 +146,11 @@ const [saved, setSaved] = useState(post.bookmarked || false);
     }
   }
 
+
+
+
+
+
   return (
     <div className='bg-white rounded-2xl border border-gray-100 shadow-sm mx-auto'>
       {/* 1. Header */}
@@ -210,13 +215,17 @@ const [saved, setSaved] = useState(post.bookmarked || false);
             TOP COMMENT
           </span>
           <div className='flex items-start gap-2.5'>
+            <Link to={`/profile/${user._id}`}>
             <img 
               src={post.topComment.commentCreator?.photo} 
               className='w-7 h-7 rounded-full object-cover mt-0.5' 
               alt="Commenter" 
-            />
+              />
+              </Link>
             <div className='bg-white p-2.5 rounded-xl border border-gray-100 flex-1 shadow-2xs'>
+             <Link to={`/profile/${user._id}`}>
               <h4 className='text-xs font-bold text-gray-900'>{post.topComment?.commentCreator?.name}</h4>
+             </Link>
               <p className='text-xs text-gray-700 mt-0.5'>{post.topComment?.content}</p>
               {post.topComment?.image ? <img src={post.topComment?.image} alt="" className='w-full object-cover max-h-44 mt-2 rounded-lg'/> : ''}
             </div>

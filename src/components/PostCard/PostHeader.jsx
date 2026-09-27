@@ -10,7 +10,9 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
+
 import { Dropdown, DropdownItem } from "flowbite-react";
+import { Link } from "react-router-dom";
 
 export default function PostHeader({ post,handleSave,saved }) {
   const { user, privacy, createdAt, body } = post;
@@ -24,17 +26,21 @@ export default function PostHeader({ post,handleSave,saved }) {
     <div className="flex p-5 pb-0 items-start justify-between">
       {/* User Info & Privacy */}
       <div className="flex items-center gap-3">
+        <Link to={`/profile/${user._id}`}>
         <img
           src={user?.photo}
           className="w-11 h-11 rounded-full object-cover"
           alt={user?.name}
-        />
+          />
+          </Link>
 
         <div>
           <div className="flex items-center gap-2">
+            <Link to={`/profile/${user._id}`}>
             <h3 className="font-bold text-sm text-gray-900">
               {user?.name}
             </h3>
+            </Link>
 
             {isProfilePictureUpdate && (
               <span className="text-sm text-gray-500">
@@ -49,7 +55,9 @@ export default function PostHeader({ post,handleSave,saved }) {
           </div>
 
           <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-0.5">
+            <Link to={`/profile/${user._id}`}>
             <span>@{user?.username}</span>
+            </Link>
 
             <span>•</span>
 

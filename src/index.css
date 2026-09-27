@@ -7,7 +7,9 @@
 
 
 
-
+html{
+   scroll-behavior: smooth;
+}
 
  .logBtn.active{ 
 color:#00298d ;

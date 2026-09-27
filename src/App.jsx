@@ -10,7 +10,9 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import PostPreview from "./components/PostPreview";
 import Settings from "./Pages/Settings";
-
+import { QueryClient , QueryClientProvider} from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+const client = new QueryClient()
 const routes = createBrowserRouter([
   // Authentication
   {
@@ -72,5 +74,8 @@ const routes = createBrowserRouter([
 ]);
 
 export default function App() {
-  return <RouterProvider router={routes} />;
+  return<QueryClientProvider client={client}>
+   <RouterProvider router={routes} />;
+  <ReactQueryDevtools initialIsOpen={false} />
+  </QueryClientProvider>
 }
