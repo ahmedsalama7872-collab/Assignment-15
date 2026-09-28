@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Check, UserPlus } from 'lucide-react';
 
-export default function Follow({userID,setProfile,profile}) {
+export default function Follow({userID,setProfile,profile,refetch}) {
 
 const [isFollowing,setIsFollowing]= useState()
 
@@ -18,6 +18,7 @@ const [isFollowing,setIsFollowing]= useState()
       
       console.log("Followed successfully:", data);
       setIsFollowing(prev => !prev); // عكس الحالة مثلاً
+      refetch()
       return true;
     
    

@@ -7,6 +7,7 @@ import NavbarCom from "./NavbarCom";
 
 export default function PostPreview() {
   const [post, setPost] = useState(null);
+  const [error, setError] = useState(false);
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -24,7 +25,8 @@ export default function PostPreview() {
 
       setPost(data.data.post);
     } catch (error) {
-      console.log(error);
+      setError(true)
+      
     }
   }
 
@@ -32,9 +34,7 @@ export default function PostPreview() {
     getPost();
   }, [id]);
 
-  return (
-
-    <div>
+  return   (<div>
     <div className="h-screen bg-[#F0F2F5]">
 <NavbarCom/>
       <div className="w-[800px] mx-auto pt-5">
@@ -46,9 +46,22 @@ export default function PostPreview() {
           Back
         </button>
 
-        {post && <PostCard post={post} />}
+       {error ? (
+        <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm">
+
+  <p>Post not found</p>
+        </div>
+) : post ? (
+  <PostCard post={post} />
+) : (
+  <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm">
+  <p>Loading...</p>
+  </div>
+)}
       </div>
     </div>
             </div>
-  );
+
+  )
+  ;
 }

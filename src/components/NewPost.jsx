@@ -7,43 +7,63 @@ import { User, Send, Earth, Lock, Image, Smile, X } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import axios from "axios";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 
-export default function NewPost() {
+export default function NewPost({refetch,setIsPosting}) {
   const { user } = useContext(UserContext);
-  const { handleSubmit, register } = useForm();
+  const { handleSubmit, register,reset } = useForm();
 
   const [privacy, setPrivacy] = useState("public");
   const [showEmoji, setShowEmoji] = useState(false);
   const [postText, setPostText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
 
-  async function onSubmit(data) {
-    const formData = new FormData();
 
-    if (postText.trim()) {
-      formData.append("body", postText);
-    }
 
-    if (data.image?.[0]) {
-      formData.append("image", data.image[0]);
-    }
 
-    if (!postText.trim() && !data.image?.[0]) {
-      return;
-    }
-
-    try {
-      await axios.post("https://route-posts.routemisr.com/posts", formData, {
+const postMutation = useMutation({
+  mutationKey:["post"],
+  mutationFn:async (formData)=> {
+      const {data} = await axios.post("https://route-posts.routemisr.com/posts", formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-        },
+        }
+      
       });
-
-      window.location.reload();
-    } catch (error) {
-      console.log(error.response?.data);
+  return data
+    },
+    onSuccess:()=>{refetch()
+         
+    reset();
+    setPostText("");
+    setImagePreview(null);
+    setShowEmoji(false);
     }
+    ,  onSettled: () => {
+    setIsPosting(false);
+  },  onMutate: () => {
+    setIsPosting(true);
+  },
+})
+
+
+  function onSubmit(data) {
+  const formData = new FormData();
+
+  if (postText.trim()) {
+    formData.append("body", postText);
   }
+
+  if (data.image?.[0]) {
+    formData.append("image", data.image[0]);
+  }
+
+  if (!postText.trim() && !data.image?.[0]) {
+    return;
+  }
+
+  postMutation.mutate(formData);
+}
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
@@ -65,7 +85,7 @@ export default function NewPost() {
   
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+   <form onSubmit={handleSubmit(onSubmit)}>
       <div className="mb-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-center gap-2">
           <img src={user?.photo?user.photo:avatar} className="w-12 rounded-full" alt={user?.name} />
@@ -155,11 +175,13 @@ export default function NewPost() {
           </div>
 
           <button
+          disabled={postMutation.isPending}
             type="submit"
             className="flex cursor-pointer items-center gap-2 rounded-lg bg-[#1877f2] px-5 py-2 text-sm font-extrabold text-white shadow-sm transition-colors hover:bg-[#166fe5]"
           >
-            Post
-            <Send className="h-4 w-4" />
+            {postMutation.isPending ? "Posting..." : "Post"}
+
+  {!postMutation.isPending && <Send className="h-4 w-4" />}
           </button>
 
           {showEmoji && (

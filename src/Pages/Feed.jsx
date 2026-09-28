@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import NewPost from "../components/NewPost";
 import PostCard from "../components/PostCard/PostCard.jsx";
 import axios from "axios";
 import { useOutletContext } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { ClipLoader } from "react-spinners";
 
 export default function Feed() {
   const { link, setLink } = useOutletContext();
-
+const [isPosting, setIsPosting] = useState(false);
   async function getPosts() {
     if (!link) return [];
 
@@ -44,7 +45,7 @@ export default function Feed() {
   const {
     data: posts = [],
     isLoading,
-    isError,
+    isError,refetch
   } = useQuery({
     queryKey: ["feed", link],
     queryFn: getPosts,
@@ -59,7 +60,7 @@ export default function Feed() {
 
   return (
     <div>
-      <NewPost />
+      <NewPost refetch={refetch} setIsPosting={setIsPosting}/>
 
       <div className="space-y-6 mt-4">
         {isLoading ? (
@@ -70,14 +71,24 @@ export default function Feed() {
           <p className="text-center mt-4 text-red-500">
             حدث خطأ أثناء تحميل المنشورات
           </p>
-        ) : posts.length > 0 ? (
+        ) : isPosting? (
+<div className="text-center mt-40">
+
+<ClipLoader color="#36d7b7" className="" />
+</div>
+        )
+        
+        
+        :posts.length > 0 ? (
           posts.map((post) => (
             <PostCard
+            refetch={refetch}
               link={link}
               setLink={setLink}
               key={post._id || post.id}
               post={post}
             />
+            
           ))
         ) : (
           <p className="text-center mt-4 text-slate-500">

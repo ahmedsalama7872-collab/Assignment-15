@@ -218,7 +218,7 @@ export default function Notifications() {
                   navigate(
                     no.type === "follow_user"
                       ? `/profile/${no.entityId}`
-                      : `/PostPreview/${no.entityId}`
+                      :  `/PostPreview/${no.entityId}`
                   )
                 }
                 className={`group mb-2 relative flex gap-3 rounded-xl border p-3 transition cursor-pointer sm:rounded-2xl sm:p-4 border-slate-200 ${

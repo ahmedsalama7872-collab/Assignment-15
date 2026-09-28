@@ -11,6 +11,7 @@ import PostHeader from './PostHeader.jsx';
 import SharedPostContent from './SharedPostContent.jsx';
 import CommentSection from './CommentSection.jsx';
 import ShareModal from './ShareModal.jsx';
+import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -33,13 +34,12 @@ dayjs.updateLocale('en', {
   }
 });
 
-export default function PostCard({ post,setPosts }) {
+export default function PostCard({ post,setPosts,refetch }) {
   const [openModal, setOpenModal] = useState(false);
-  const [shareBody, setShareBody] = useState(""); 
 const [saved, setSaved] = useState(post.bookmarked || false);
   const [commentsOpenned, setCommentsOpenned] = useState(false); 
   const [commentAPI, setCommentAPI] = useState(5); 
-
+const [shareBody, setShareBody] = useState("");
   const [postText, setPostText] = useState("");
   const [commentImage, setCommentImage] = useState(null);
   const [commentImageFile, setCommentImageFile] = useState(null);
@@ -49,7 +49,6 @@ const [saved, setSaved] = useState(post.bookmarked || false);
   const { body, image, commentsCount = 0 } = post;
 
   const [likesArray, setLikesArray] = useState(post.likes || []);
-  const [commentsArray, setCommentsArray] = useState([]);
   const isLiked = likesArray.includes(user?._id);
 
   const handleImageChange = (e) => {
@@ -65,11 +64,7 @@ const [saved, setSaved] = useState(post.bookmarked || false);
     setCommentImageFile(null);
   };
 
-  useEffect(() => {
-    if (commentsOpenned) {
-      getComments();
-    }
-  }, [commentAPI, commentsOpenned]);
+
 
   async function handleLike() {
     try {
@@ -82,15 +77,24 @@ const [saved, setSaved] = useState(post.bookmarked || false);
     }
   }
 
+
+  const {refetch:refetchComments,data} = useQuery({
+    queryKey:["getComments",post._id,commentAPI],
+    queryFn:getComments,
+    enabled:false
+  })
+
+const commentsArray = data || [];
+
   async function getComments() {
-    try {
+    
       const { data } = await axios.get(`https://route-posts.routemisr.com/posts/${post._id}/comments?page=1&limit=${commentAPI}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("userToken")}` }
       });
-      setCommentsArray(data.data.comments || data.comments || []);
-    } catch (error) {
-      console.log("Error getting comments post:", error.response?.data || error.message);
-    }
+      
+    
+     
+   return data.data.comments
   }
 
   async function handleAddComment(e) {
@@ -108,25 +112,34 @@ const [saved, setSaved] = useState(post.bookmarked || false);
 
       setPostText("");
       handleRemoveImage();
-      getComments();
+      refetchComments()
     } catch (error) {
       console.log("Error adding comment:", error.response?.data || error.message);
     }
   }
-
-  async function handleShareSubmit() {
-    try {
-      setSharesCount(prev => prev + 1);
-      setOpenModal(false);
-      await axios.post(`https://route-posts.routemisr.com/posts/${post._id}/share`, { 
-        body: shareBody.trim() === "" ? " " : shareBody 
+const shareMutation = useMutation({
+  mutationKey:["share"],
+  mutationFn:async (shareBody)=>{
+    const text = typeof shareBody === "string" ? shareBody : "";
+    await axios.post(`https://route-posts.routemisr.com/posts/${post._id}/share`, { 
+        body: text.trim() === "" ? " " : text 
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem("userToken")}` }
       });
-      setShareBody(""); 
-    } catch (error) {
-      setSharesCount(prev => prev - 1);
-    }
+  },
+    onSuccess: () => {
+    setSharesCount((prev) => prev + 1);
+    setOpenModal(false);
+    setShareBody("");
+    
+  },
+  onError:(error)=>{
+    console.log(error.message);
+    
+  }
+})
+  function handleShareSubmit(shareBody) {
+    shareMutation.mutate(shareBody)
   }
   async function handleSave() {
     try {
@@ -137,7 +150,7 @@ const [saved, setSaved] = useState(post.bookmarked || false);
       });
       const newSaved = !saved
        setSaved(newSaved)
-       if(!newSaved){
+       if (!newSaved && setPosts){
         setPosts((posts)=>posts.filter(p=>((p._id || p.id) !== (post._id || post.id))))
        }
     } catch (error) {
@@ -154,7 +167,7 @@ const [saved, setSaved] = useState(post.bookmarked || false);
   return (
     <div className='bg-white rounded-2xl border border-gray-100 shadow-sm mx-auto'>
       {/* 1. Header */}
-      <PostHeader post={post} handleSave={handleSave} saved={saved}/>
+      <PostHeader refetch={refetch} post={post} handleSave={handleSave} saved={saved}/>
 
       {/* Post Body Text */}
       <div className='mt-3 text-gray-800 text-sm px-5 mb-2 font-medium'>
@@ -199,7 +212,7 @@ const [saved, setSaved] = useState(post.bookmarked || false);
           <ThumbsUp className='w-4 h-4' />
           <span>Like</span>
         </button>
-        <button onClick={() => { setCommentsOpenned(!commentsOpenned); getComments(); }} className='flex items-center justify-center gap-2 py-1.5 hover:bg-gray-50 rounded-xl text-gray-600 text-xs font-medium cursor-pointer'>
+        <button onClick={() => { setCommentsOpenned(!commentsOpenned);refetchComments(); }} className='flex items-center justify-center gap-2 py-1.5 hover:bg-gray-50 rounded-xl text-gray-600 text-xs font-medium cursor-pointer'>
           <MessageCircle className='w-4 h-4' />
           <span>Comment</span>
         </button>
@@ -230,7 +243,7 @@ const [saved, setSaved] = useState(post.bookmarked || false);
               {post.topComment?.image ? <img src={post.topComment?.image} alt="" className='w-full object-cover max-h-44 mt-2 rounded-lg'/> : ''}
             </div>
           </div>
-          <button onClick={() => { setCommentsOpenned(!commentsOpenned); getComments(); }} className='cursor-pointer text-xs text-blue-600 font-semibold mt-2.5 hover:underline block'>
+          <button onClick={() => { setCommentsOpenned(!commentsOpenned); refetchComments(); }} className='cursor-pointer text-xs text-blue-600 font-semibold mt-2.5 hover:underline block'>
             View all comments
           </button>
         </div>
@@ -238,7 +251,8 @@ const [saved, setSaved] = useState(post.bookmarked || false);
 
       {/* Comments Section */}
       {commentsOpenned && (
-        <CommentSection 
+        <CommentSection
+        refetchComments={refetchComments} 
           post={post}
           user={user}
           commentsArray={commentsArray}

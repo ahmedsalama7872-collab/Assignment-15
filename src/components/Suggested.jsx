@@ -5,13 +5,22 @@ import { UserPlus, Search, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Follow from "./Follow";
+import { useQuery } from "@tanstack/react-query";
 export default function Suggested() {
-  const [suggestions, setSuggestions] = useState([]);
+ 
   const [sugMenu, setSugMenu] = useState(false);
   const [profile,setProfile]= useState()
 
+
+
+
+const {data:suggestions=[],refetch} = useQuery({
+  queryKey:['suggested'],
+  queryFn:getSuggested
+})
+
   async function getSuggested() {
-    try {
+    
       const { data } = await axios.get(
         "https://route-posts.routemisr.com/users/suggestions?page=1&limit=5",
         {
@@ -21,19 +30,10 @@ export default function Suggested() {
         }
       );
       
-      console.log("API Response:", data);
-      
-      const usersList = data.data.suggestions;
-      setSuggestions(usersList);
-    } catch (err) {
-      console.log(err);
-    }
+    return data.data.suggestions
   }
   
-  useEffect(() => {
-    getSuggested();
-  }, []);
-  
+ 
   return (
     <div>
       <button
@@ -111,7 +111,7 @@ export default function Suggested() {
                     </Link>
                   </div>
                 </div>
-                <Follow userID={user._id} setProfile={setProfile} profile={profile}/>
+                <Follow userID={user._id} refetch={refetch} setProfile={setProfile} profile={profile}/>
               </div>
 
               <div className="mt-2 hidden lg:flex items-center gap-1.5 text-[10px] text-gray-500 font-medium">
