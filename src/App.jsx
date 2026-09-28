@@ -5,13 +5,14 @@ import Layout from "./Pages/Layout";
 import Feed from "./Pages/Feed";
 import Profile from "./Pages/Profile";
 import Notifications from "./Pages/Notifications";
-import Auth from "./Pages/auth";
+import Auth from "./Pages/Auth";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import PostPreview from "./components/PostPreview";
 import Settings from "./Pages/Settings";
 import { QueryClient , QueryClientProvider} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import Suggestions from "./Pages/Suggestions";
 const client = new QueryClient()
 const routes = createBrowserRouter([
   // Authentication
@@ -58,6 +59,10 @@ const routes = createBrowserRouter([
     element: <Profile />,
   },
   {
+    path: "/suggestions",
+    element: <Suggestions />,
+  },
+  {
     path: "/settings",
     element: <Settings />,
   },
@@ -75,7 +80,7 @@ const routes = createBrowserRouter([
 
 export default function App() {
   return<QueryClientProvider client={client}>
-   <RouterProvider router={routes} />;
+   <RouterProvider router={routes} />
   <ReactQueryDevtools initialIsOpen={false} />
   </QueryClientProvider>
 }

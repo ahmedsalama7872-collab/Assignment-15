@@ -228,7 +228,7 @@ const shareMutation = useMutation({
             TOP COMMENT
           </span>
           <div className='flex items-start gap-2.5'>
-            <Link to={`/profile/${user._id}`}>
+            <Link to={`/profile/${post.topComment.commentCreator._id}`}>
             <img 
               src={post.topComment.commentCreator?.photo} 
               className='w-7 h-7 rounded-full object-cover mt-0.5' 
@@ -236,7 +236,7 @@ const shareMutation = useMutation({
               />
               </Link>
             <div className='bg-white p-2.5 rounded-xl border border-gray-100 flex-1 shadow-2xs'>
-             <Link to={`/profile/${user._id}`}>
+             <Link to={`/profile/${post.topComment.commentCreator._id}`}>
               <h4 className='text-xs font-bold text-gray-900'>{post.topComment?.commentCreator?.name}</h4>
              </Link>
               <p className='text-xs text-gray-700 mt-0.5'>{post.topComment?.content}</p>

@@ -36,7 +36,7 @@ export default function ShareModal({ openModal, setOpenModal, shareBody, setShar
         <Button color="gray" className="rounded-xl px-4 py-1 text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 border-none" onClick={() => setOpenModal(false)}>
           Cancel
         </Button>
-        <Button className="rounded-xl px-4 py-1 text-sm bg-blue-600 text-white hover:bg-blue-700" onClick={handleShareSubmit}>
+        <Button className="rounded-xl px-4 py-1 text-sm bg-blue-600 text-white hover:bg-blue-700" onClick={()=>handleShareSubmit(shareBody)}>
           Share now
         </Button>
       </ModalFooter>
