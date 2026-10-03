@@ -31,7 +31,16 @@ const [page, setPage] = useState(1);
         </div>
 
         <div className="order-3 xl:order-2 min-w-0">
-          <Outlet context={{ page,setPage,link, setLink, bookmarked }} />
+         <Outlet
+  context={{
+    page,
+    setPage,
+    link,
+    setLink,
+    bookmarked,
+    setBookmarked,
+  }}
+/>
         </div>
 
         <div className="order-2 xl:order-3 sticky top-[84px]">
