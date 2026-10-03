@@ -33,13 +33,11 @@ export default function CommentSection({
   const [showEmoji, setShowEmoji] = useState(false);
   const [commentId, setCommentId] = useState(null);
 
-  // Reply states
   const [replyText, setReplyText] = useState('');
   const [replyImage, setReplyImage] = useState(null);
   const [replyImagePreview, setReplyImagePreview] = useState(null);
   const [showReplyEmoji, setShowReplyEmoji] = useState(false);
 
-  // Edit states
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
 
@@ -47,12 +45,10 @@ export default function CommentSection({
     setPostText((prev) => prev + emojiData.emoji);
   };
 
-  // Reply emoji
   const handleReplyEmojiClick = (emojiData) => {
     setReplyText((prev) => prev + emojiData.emoji);
   };
 
-  // Reply image
   const handleReplyImageChange = (e) => {
     const file = e.target.files[0];
 
@@ -62,13 +58,11 @@ export default function CommentSection({
     setReplyImagePreview(URL.createObjectURL(file));
   };
 
-  // Remove reply image
   const handleRemoveReplyImage = () => {
     setReplyImage(null);
     setReplyImagePreview(null);
   };
 
-  // Get Replies
   const {
     data,
     refetch: refetchReplies
@@ -93,7 +87,6 @@ export default function CommentSection({
 
   const repliesArray = data || [];
 
-  // Like Comment / Reply
   const commentLikeMutation = useMutation({
     mutationKey: ["commentLike"],
 
@@ -112,7 +105,6 @@ export default function CommentSection({
     }
   });
 
-  // Add Reply
   const addReplyMutation = useMutation({
     mutationKey: ["addReply"],
 
@@ -151,7 +143,6 @@ export default function CommentSection({
     }
   });
 
-  // Edit Comment / Reply
   const editCommentMutation = useMutation({
     mutationKey: ["editComment"],
 
@@ -183,7 +174,6 @@ export default function CommentSection({
     }
   });
 
-  // Delete Comment / Reply
   const deleteCommentMutation = useMutation({
     mutationKey: ["deleteComment"],
 
@@ -209,13 +199,11 @@ export default function CommentSection({
     }
   });
 
-  // Start Edit
   const handleEdit = (comment) => {
     setEditingId(comment._id);
     setEditText(comment.content || '');
   };
 
-  // Save Edit
   const handleSaveEdit = (id) => {
     if (!editText.trim()) return;
 
@@ -225,7 +213,6 @@ export default function CommentSection({
     });
   };
 
-  // Check ownership
   const isMyComment = (comment) => {
     return comment.commentCreator?._id === user._id;
   };
@@ -270,7 +257,7 @@ export default function CommentSection({
 
             <div className='min-w-0 flex-1'>
 
-              {/* Comment */}
+              
               <div className='flex items-start gap-2'>
 
                 <div className='relative inline-block max-w-full rounded-2xl bg-[#f0f2f5] px-3 py-2'>
@@ -336,7 +323,7 @@ export default function CommentSection({
 
                 </div>
 
-                {/* Comment Dropdown */}
+                
                 {(isMyComment(comment) || isMyPost) && (
                   <Dropdown
                     arrowIcon={false}
@@ -370,7 +357,7 @@ export default function CommentSection({
 
               </div>
 
-              {/* Comment Actions */}
+              
               <div className='mt-1.5 flex items-center gap-4 px-1'>
 
                 <span className='text-xs font-semibold text-slate-400'>
@@ -406,7 +393,7 @@ export default function CommentSection({
 
               </div>
 
-              {/* Replies */}
+              
               <div className='mt-4 ml-8'>
 
                 {commentId === comment._id &&
@@ -426,7 +413,7 @@ export default function CommentSection({
 
                       <div className='min-w-0 flex-1'>
 
-                        {/* Reply */}
+                        
                         <div className='flex items-start gap-2'>
 
                           <div className='relative inline-block max-w-full rounded-2xl bg-[#f0f2f5] px-3 py-2'>
@@ -484,7 +471,7 @@ export default function CommentSection({
 
                           </div>
 
-                          {/* Reply Dropdown */}
+                          
                           {(isMyComment(rep) || isMyPost) && (
                             <Dropdown
                               arrowIcon={false}
@@ -518,7 +505,7 @@ export default function CommentSection({
 
                         </div>
 
-                        {/* Reply Actions */}
+                        
                         <div className='mt-1.5 flex items-center gap-4 px-1'>
 
                           <span className='text-xs font-semibold text-slate-400'>
@@ -546,7 +533,7 @@ export default function CommentSection({
                     </div>
                   ))}
 
-                {/* Add Reply Form */}
+                
                 {commentId === comment._id && (
                   <form
                     onSubmit={(e) => {
@@ -678,7 +665,7 @@ export default function CommentSection({
 
       </div>
 
-      {/* Add Comment */}
+      
       <form onSubmit={handleAddComment} className='mt-3'>
 
         <div className='flex items-start gap-2'>

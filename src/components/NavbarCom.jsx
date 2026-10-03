@@ -56,10 +56,10 @@ function handleLogout(){
               </div>
             }
           >
-            {/* تم تصحيح المسار هنا ليطابق /app/profile */}
+            
             <Link to={'/profile'}><DropdownItem className="rounded-lg"><User className="w-5 h-5 me-2" /> Profile</DropdownItem></Link>
             
-            {/* تم تصحيح المسار هنا ليطابق /app/settings */}
+            
             <Link to={'/settings'}><DropdownItem className="rounded-lg"><Settings className="me-2 w-5 h-5" /> Settings</DropdownItem></Link>
             
             <DropdownDivider />

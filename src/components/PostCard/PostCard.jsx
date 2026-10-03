@@ -1,12 +1,25 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogClose,
+  DialogDescription,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext.jsx';
-import { ThumbsUp, Repeat2, MessageCircle, Share2, Bookmark } from "lucide-react";
+import { ThumbsUp, Repeat2, MessageCircle, Share2, Bookmark, Users } from "lucide-react";
 import axios from 'axios';
-// استيراد الكومباوننتس الفرعية
 import PostHeader from './PostHeader.jsx';
 import SharedPostContent from './SharedPostContent.jsx';
 import CommentSection from './CommentSection.jsx';
@@ -64,6 +77,19 @@ const [shareBody, setShareBody] = useState("");
     setCommentImageFile(null);
   };
 
+  async function getLikes(id) {
+    const {data} = await axios.get(`https://route-posts.routemisr.com/users/${id}/profile`,{headers:{Authorization:`Bearer ${localStorage.getItem("userToken")}`}}) 
+     console.log("LIKE USER RESPONSE:", data);
+    return data.data.user
+  }
+
+const likesQueries = useQueries({
+  queries: likesArray.map((id) => ({
+    queryKey: ["likeUser", id],
+    queryFn: () => getLikes(id),
+    enabled: false
+  })),
+});
 
 
   async function handleLike() {
@@ -166,28 +192,80 @@ const shareMutation = useMutation({
 
   return (
     <div className='bg-white rounded-2xl border border-gray-100 shadow-sm mx-auto'>
-      {/* 1. Header */}
+      
       <PostHeader refetch={refetch} post={post} handleSave={handleSave} saved={saved}/>
 
-      {/* Post Body Text */}
+      
       <div className='mt-3 text-gray-800 text-sm px-5 mb-2 font-medium'>
         <p>{body!='updated profile picture.'&&body!='updated cover photo.'?body:''}</p>
         { saved && <div className='mt-3 inline-flex items-center gap-1 rounded-full bg-[#e7f3ff] px-2.5 py-1 text-[11px] font-bold text-[#1877f2]'><Bookmark className='w-3 h-3'/> Saved</div>}
       </div>
 
-      {/* Post Image or Shared Content */}
+      
       <div>
         {image && <img src={image} className='max-h-[620px] w-full object-cover' alt="" />}
         {post.isShare && post.sharedPost ? <SharedPostContent sharedPost={post.sharedPost} post={post} /> : ''}
       </div>
 
-      {/* Post Stats Bar (مع زرار View details) */}
+      
       <div className='flex px-5 items-center justify-between text-xs text-gray-500 mt-4 pt-3'>
         <div className='flex items-center gap-1.5'>
           <span className='bg-blue-600 text-white p-1 rounded-full text-[10px]'>
             <ThumbsUp className='w-3 h-3' />
           </span>
-          <span className='font-medium text-gray-700'>{likesArray.length} likes</span>
+
+
+  
+  
+
+
+
+
+      <Dialog>
+     <DialogTrigger
+    onClick={() => likesQueries.forEach((query) => query.refetch())}
+    className="border-0 text-[14px] hover:bg-transparent hover:text-blue-500 cursor-pointer hover:underline"
+  >
+    {likesArray.length} likes
+  </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+
+        <DialogHeader>
+          <DialogTitle className={'flex gap-2'}> <Users className='w-4 h-4 text-blue-500'/> People who reacted</DialogTitle>
+          
+        </DialogHeader>
+       
+          
+          <div>
+          
+
+          
+ {likesQueries.map((query) => {
+  const likeUser = query.data;
+
+  if (!likeUser) return null;
+
+  return (
+  
+     <Link to={`/profile/${likeUser._id}`} key={likeUser._id} className='flex mt-2 items-center gap-3 rounded-xl px-3 py-2 transition hover:bg-slate-100'>
+           <img src={likeUser.photo} className='h-10 w-10 rounded-full object-cover' alt="" />
+           <div className='min-w-0'>
+<p className='truncate text-sm font-bold text-slate-900'>{likeUser.name}</p>
+<p className='truncate text-xs text-slate-500'>{likeUser.username}</p>
+           </div>
+           </Link>
+  );
+})}
+   
+          </div>
+          
+      
+       
+              </DialogContent>
+      </Dialog>
+    
+  
+
         </div>
         <div className='flex items-center gap-3'>
           <span className='flex items-center gap-1'><Repeat2 className='w-3 h-3' /> {sharesCount} shares</span>
@@ -201,7 +279,7 @@ const shareMutation = useMutation({
 </Link>        </div>
       </div>
 
-      {/* Action Buttons (Like, Comment, Share) */}
+      
       <div className='grid grid-cols-3 gap-1 py-1 my-2 mx-5 border-t border-gray-200'>
         <button 
           onClick={handleLike} 
@@ -249,7 +327,7 @@ const shareMutation = useMutation({
         </div>
       ) : ''}
 
-      {/* Comments Section */}
+      
       {commentsOpenned && (
         <CommentSection
         refetchComments={refetchComments} 
@@ -268,7 +346,7 @@ const shareMutation = useMutation({
         />
       )}
 
-      {/* Share Modal */}
+      
       <ShareModal 
         openModal={openModal} 
         setOpenModal={setOpenModal} 

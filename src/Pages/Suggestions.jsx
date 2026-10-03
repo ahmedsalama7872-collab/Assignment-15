@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Users } from "lucide-react";
+import { ArrowLeft, Search, Users } from "lucide-react";
 import Follow from "../components/Follow.jsx";
 
 export default function Suggestions() {
   const [page, setPage] = useState(1);
   const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState('');
 
   const {
     data: currentPageUsers = [],
@@ -15,10 +16,10 @@ export default function Suggestions() {
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: ["suggestions", page],
+    queryKey: ["suggestions", page,search],
     queryFn: async () => {
       const response = await axios.get(
-        `https://route-posts.routemisr.com/users/suggestions?page=${page}&limit=20`,
+        `https://route-posts.routemisr.com/users/suggestions?page=${page}&limit=20&q=${search}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
@@ -34,12 +35,10 @@ export default function Suggestions() {
     if (!currentPageUsers.length) return;
 
     setUsers((prev) => {
-      // أول صفحة
       if (page === 1) {
         return currentPageUsers;
       }
 
-      // استبدال الصفحة الحالية بعد الـ refetch
       const startIndex = (page - 1) * 20;
 
       const newUsers = [...prev];
@@ -76,6 +75,19 @@ export default function Suggestions() {
             <span className="bg-gray-100 text-gray-700 text-xs font-semibold px-2.5 py-1 rounded-full">
               {users.length}
             </span>
+          </div>
+
+          
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+
+            <input
+            value={search}
+            onChange={(e)=>setSearch(e.target.value)}
+              type="text"
+              placeholder="Search friends..."
+              className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:bg-white transition"
+            />
           </div>
 
           {isLoading && page === 1 && (

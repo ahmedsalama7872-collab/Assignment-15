@@ -58,7 +58,7 @@ export default function Settings() {
       <NavbarCom />
       <div className="flex min-h-[80vh] pt-15 justify-center p-4">
         <div className="w-full max-w-xl rounded-3xl h-fit border border-slate-200 bg-white p-6 shadow-[0_2px_10px_rgba(15,23,42,.06)] sm:p-8">
-          {/* Header */}
+          
           <div className="flex items-center gap-3.5 mb-6">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#eff6ff] text-[#1877f2] ring-8 ring-[#f8fafc]">
               <Key className="h-6 w-6" />
@@ -73,7 +73,7 @@ export default function Settings() {
             </div>
           </div>
 
-          {/* Feedback Message */}
+          
           {message && (
             <div
               className={`mb-4 rounded-xl p-3 text-sm font-semibold ${
@@ -86,9 +86,9 @@ export default function Settings() {
             </div>
           )}
 
-          {/* Form */}
+          
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Current Password */}
+            
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
                 Current password
@@ -102,7 +102,7 @@ export default function Settings() {
               />
             </div>
 
-            {/* New Password */}
+            
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
                 New password
@@ -120,7 +120,7 @@ export default function Settings() {
               </p>
             </div>
 
-            {/* Confirm New Password */}
+            
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
                 Confirm new password
@@ -135,7 +135,7 @@ export default function Settings() {
               />
             </div>
 
-            {/* Submit Button */}
+            
             <div className="pt-2">
               <Button
                 type="submit"

@@ -63,8 +63,8 @@ export default function Auth() {
 
 
     <div className="mb-5 grid grid-cols-2 rounded-xl bg-slate-100 p-1">
-        <NavLink to={'login'} className="rounded-lg py-2 text-sm font-extrabold transition text-center  text-slate-600 hover:text-slate-800 logBtn">Login</NavLink>
-        <NavLink to={'register'} className="rounded-lg py-2 text-sm font-extrabold transition text-center logBtn text-slate-600 hover:text-slate-800">Register</NavLink>
+        <NavLink to={'/'} className="rounded-lg py-2 text-sm font-extrabold transition text-center  text-slate-600 hover:text-slate-800 logBtn">Login</NavLink>
+        <NavLink to={'/register'} className="rounded-lg py-2 text-sm font-extrabold transition text-center logBtn text-slate-600 hover:text-slate-800">Register</NavLink>
     </div>
 <Outlet/>
         </div>

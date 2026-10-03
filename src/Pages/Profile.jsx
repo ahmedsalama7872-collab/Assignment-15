@@ -276,7 +276,7 @@ const navigate=useNavigate()
 {!isMyProfile&&        <button onClick={()=>navigate(-1)} className="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50 mb-5"><ArrowLeft className="w-4 h-4"/> Back</button>
 }
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_2px_10px_rgba(15,23,42,.06)] sm:rounded-[28px]">
-          {/* Cover */}
+          
           <div className="group/cover relative h-44 bg-[linear-gradient(112deg,#0f172a_0%,#1e3a5f_36%,#2b5178_72%,#5f8fb8_100%)] sm:h-52 lg:h-60">
             {coverPreview ? (
               <>
@@ -334,13 +334,13 @@ const navigate=useNavigate()
             )}
           </div>
 
-          {/* Profile Info */}
+          
           <div className="relative -mt-12 px-3 pb-5 sm:-mt-16 sm:px-8 sm:pb-6">
             <div className="rounded-3xl border border-white/60 bg-white/92 p-5 backdrop-blur-xl sm:p-7">
               <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                 <div className="min-w-0">
                   <div className="flex items-end gap-4">
-                    {/* Avatar */}
+                    
                     <div className="group/avatar relative shrink-0">
                       <button type="button" className="cursor-zoom-in rounded-full">
                         <img
@@ -376,7 +376,7 @@ const navigate=useNavigate()
                       )}
                     </div>
 
-                    {/* Name + Username */}
+                    
                     <div className="min-w-0 pb-1">
                       <h2 className="truncate text-2xl font-black tracking-tight text-slate-900 sm:text-4xl">
                         {currentUser?.name}
@@ -392,7 +392,7 @@ const navigate=useNavigate()
                   </div>
                 </div>
 
-                {/* Statistics */}
+                
                 {isMyProfile ? (
                   <div className="grid w-full grid-cols-3 gap-2 lg:w-[520px]">
                     <div className="rounded-2xl border border-slate-200 bg-white px-3 py-3 text-center sm:px-4 sm:py-4">
@@ -427,7 +427,7 @@ const navigate=useNavigate()
                 }
               </div>
 
-              {/* About */}
+              
               {isMyProfile && (
                 <div className="mt-5 grid gap-4 lg:grid-cols-[1.3fr_.7fr]">
                   <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
@@ -469,7 +469,7 @@ const navigate=useNavigate()
           </div>
         </div>
 
-        {/* Tabs */}
+        
         {isMyProfile&&<div className="mt-5 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
           <div className="grid w-full grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1.5 sm:inline-flex sm:w-auto sm:gap-0">
             <button
@@ -506,10 +506,9 @@ const navigate=useNavigate()
           </span>
         </div>
 }
-        {/* Posts Loop with Custom Design for MyProfile (Posts & Saved) */}
+        
         {myPosts.length > 0 ? (
           myPosts.map((post) => {
-            // التحقق: إذا كان البروفाइल هو بروفايلي الشخصي (سواء في قسم الـ Posts أو الـ Saved)
             return isMyProfile ? (
               <div
                 key={post._id}
@@ -540,14 +539,14 @@ const navigate=useNavigate()
                   </Link>
                 </div>
 
-                {/* Post Body/Text */}
+                
                 {(post.body || post.content) && (
                   <div className="w-full px-4 pt-2">
                     <p>{post.body || post.content}</p>
                   </div>
                 )}
 
-                {/* Post Image */}
+                
                 {post.image && (
                   <div className="w-full bg-slate-950/95 mt-3">
                     <img
@@ -606,7 +605,7 @@ const navigate=useNavigate()
         )}
       </div>
 
-      {/* Adjust Profile Photo Modal */}
+      
       <Modal show={openModal} onClose={closeModal} className="[&>div]:max-w-[560px]">
         <div className="w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-xl sm:p-5">
           <div className="mb-4 flex items-start justify-between">
@@ -627,7 +626,7 @@ const navigate=useNavigate()
             </button>
           </div>
 
-          {/* Image Preview */}
+          
           <div className="mx-auto flex w-full max-w-[340px] items-center justify-center">
             <div className="relative flex h-[320px] w-[320px] items-center justify-center overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200">
               {avatarPreview ? (
@@ -646,7 +645,7 @@ const navigate=useNavigate()
             </div>
           </div>
 
-          {/* Zoom */}
+          
           <div className="mt-5 space-y-2">
             <div className="flex items-center justify-between text-xs font-bold text-slate-500">
               <span>Zoom</span>
@@ -663,7 +662,7 @@ const navigate=useNavigate()
             />
           </div>
 
-          {/* Buttons */}
+          
           <div className="mt-6 flex justify-end gap-3">
             <Button color="alternative" onClick={closeModal}>
               Cancel

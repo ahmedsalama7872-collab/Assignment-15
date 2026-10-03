@@ -42,7 +42,6 @@ export default function PostHeader({
 
   const [openDelete, setOpenDelete] = useState(false);
 
-  // Edit
   const [isEditing, setIsEditing] = useState(false);
   const [editBody, setEditBody] = useState(body || "");
 
@@ -52,7 +51,6 @@ export default function PostHeader({
   const isCoverUpdate =
     body?.trim() === "updated cover photo.";
 
-  // Delete Post
   const deleteMutation = useMutation({
     mutationFn: async (postId) => {
       const { data } = await axios.delete(
@@ -73,7 +71,6 @@ export default function PostHeader({
     },
   });
 
-  // Edit Post
   const editMutation = useMutation({
     mutationFn: async ({ postId, body }) => {
       const { data } = await axios.put(
@@ -112,9 +109,9 @@ export default function PostHeader({
 
   return (
     <div className="relative">
-      {/* Header */}
+      
       <div className="flex p-5 pb-0 items-start justify-between">
-        {/* User Info & Privacy */}
+        
         <div className="flex items-center gap-3">
           <Link to={`/profile/${post.user._id}`}>
             <img
@@ -204,7 +201,7 @@ export default function PostHeader({
           </div>
         </div>
 
-        {/* Post Actions */}
+        
         <Dropdown
           label=""
           renderTrigger={() => (
@@ -216,7 +213,7 @@ export default function PostHeader({
           className="rounded-2xl shadow-lg border border-gray-100 p-1 w-48"
           placement="bottom-end"
         >
-          {/* Save */}
+          
           <DropdownItem
             onClick={handleSave}
             className="flex items-center gap-2.5 py-2 px-3 text-gray-700 font-medium rounded-xl hover:bg-gray-100"
@@ -225,9 +222,9 @@ export default function PostHeader({
             <span>{saved ? "Unsave Post" : "Save Post"}</span>
           </DropdownItem>
 
-          {post.user._id == user._id && (
+          {post?.user?._id == user?._id && (
             <>
-              {/* Edit */}
+              
               <DropdownItem
                 onClick={() => {
                   setEditBody(body || "");
@@ -239,7 +236,7 @@ export default function PostHeader({
                 <span>Edit post</span>
               </DropdownItem>
 
-              {/* Delete */}
+              
               <DropdownItem
                 onClick={() => setOpenDelete(true)}
                 className="flex items-center gap-2.5 py-2 px-3 text-red-600 font-medium rounded-xl hover:bg-red-50"
@@ -252,7 +249,7 @@ export default function PostHeader({
         </Dropdown>
       </div>
 
-      {/* Edit Post */}
+      
       {isEditing && (
         <div className="px-5 pb-4 pt-3">
           <div className="rounded-xl border border-slate-200 bg-white p-3">
@@ -289,7 +286,7 @@ export default function PostHeader({
         </div>
       )}
 
-      {/* Delete Confirmation */}
+      
       <AlertDialog
         open={openDelete}
         onOpenChange={setOpenDelete}

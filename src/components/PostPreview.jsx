@@ -20,13 +20,12 @@ export default function PostPreview() {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
-        }
+        },
       );
 
       setPost(data.data.post);
     } catch (error) {
-      setError(true)
-      
+      setError(true);
     }
   }
 
@@ -34,34 +33,35 @@ export default function PostPreview() {
     getPost();
   }, [id]);
 
-  return   (<div>
-    <div className="h-screen bg-[#F0F2F5]">
-<NavbarCom/>
-      <div className="w-[800px] mx-auto pt-5">
-        <button
-          onClick={() => navigate(-1)}
-          className="mb-4 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50 cursor-pointer"
-          >
-          <ArrowLeft className="w-4 h-4" />
-          Back
-        </button>
+  return (
+    <>
+  
+      <div>
+        <div className="h-screen bg-[#F0F2F5]">
+          <NavbarCom />
+          <div className="w-[800px] mx-auto pt-5">
+            <button
+              onClick={() => navigate(-1)}
+              className="mb-4 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-50 cursor-pointer"
+              >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </button>
 
-       {error ? (
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm">
-
-  <p>Post not found</p>
+            {error ? (
+              <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm">
+                <p>Post not found</p>
+              </div>
+            ) : post ? (
+              <PostCard post={post} />
+            ) : (
+              <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm">
+                <p>Loading...</p>
+              </div>
+            )}
+          </div>
         </div>
-) : post ? (
-  <PostCard post={post} />
-) : (
-  <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500 shadow-sm">
-  <p>Loading...</p>
-  </div>
-)}
       </div>
-    </div>
-            </div>
-
-  )
-  ;
+    </>
+  );
 }

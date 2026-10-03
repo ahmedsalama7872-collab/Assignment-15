@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, createHashRouter, RouterProvider } from "react-router-dom";
 
 import Layout from "./Pages/Layout";
 import Feed from "./Pages/Feed";
@@ -13,15 +13,18 @@ import Settings from "./Pages/Settings";
 import { QueryClient , QueryClientProvider} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Suggestions from "./Pages/Suggestions";
+import ProtectedRouting from "./Pages/ProtectedRouting";
 const client = new QueryClient()
-const routes = createBrowserRouter([
-  // Authentication
+const routes = createHashRouter([
   {
     path: "/",
     element: <Auth />,
     children: [
       {
-        path: "login",
+        
+       index:true
+        ,
+
         element: <Login />,
       },
       {
@@ -31,50 +34,46 @@ const routes = createBrowserRouter([
     ],
   },
 
-  // Main App
   {
     path: "/app",
     element: <Layout />,
     children: [
       {
         index: true,
-        element: <Feed />,
+        element:<ProtectedRouting> <Feed /> </ProtectedRouting>,
       },
       {
         path: "feed",
-        element: <Feed />,
+        element:<ProtectedRouting> <Feed /> </ProtectedRouting>,
       },
     ],
   },
 
-  // Post Preview - مستقل عن Layout
   {
     path: "/PostPreview/:id",
-    element: <PostPreview />,
+    element: <ProtectedRouting><PostPreview /> </ProtectedRouting>,
   },
 
-  // Profile
   {
     path: "/profile",
-    element: <Profile />,
+    element: <ProtectedRouting><Profile /> </ProtectedRouting>,
   },
   {
     path: "/suggestions",
-    element: <Suggestions />,
+    element: <ProtectedRouting><Suggestions /></ProtectedRouting>,
   },
   {
     path: "/settings",
-    element: <Settings />,
+    element:<ProtectedRouting> <Settings /></ProtectedRouting>,
   },
   {
     path: "/profile/:id",
-    element: <Profile />,
+    element: <ProtectedRouting><Profile /> </ProtectedRouting>,
   },
 
-  // Notifications
   {
     path: "/notifications",
-    element: <Notifications />,
+    element: <ProtectedRouting><Notifications /> </ProtectedRouting>,
   },
 ]);
 

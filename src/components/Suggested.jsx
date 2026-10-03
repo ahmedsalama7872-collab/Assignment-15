@@ -10,25 +10,20 @@ import { useQuery } from "@tanstack/react-query";
 export default function Suggested() {
   const [sugMenu, setSugMenu] = useState(false);
   const [profile, setProfile] = useState();
-  const [search, setSearch] = useState("");
-
+  const [search, setSearch] = useState(null);
+  
   const { data: suggestions = [], refetch } = useQuery({
-    queryKey: ["suggested", search],
+    queryKey: ["suggested",search],
 
     queryFn: async () => {
-      const searchValue = search.trim();
-
-      const url = searchValue
-        ? `https://route-posts.routemisr.com/users/suggestions?search=${encodeURIComponent(
-            searchValue
-          )}&limit=10`
-        : "https://route-posts.routemisr.com/users/suggestions?limit=10";
-
-      const { data } = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-        },
-      });
+      const { data } = await axios.get(
+        `https://route-posts.routemisr.com/users/suggestions?limit=5&q=${search}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        }
+      );
 
       return data.data.suggestions || [];
     },
@@ -36,7 +31,7 @@ export default function Suggested() {
 
   return (
     <div>
-      {/* Mobile Button */}
+      
       <button
         onClick={() => setSugMenu(!sugMenu)}
         className="inline-flex w-full lg:hidden items-center cursor-pointer justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left shadow-sm"
@@ -57,13 +52,13 @@ export default function Suggested() {
         </span>
       </button>
 
-      {/* Suggestions */}
+      
       <div
         className={`${
           sugMenu ? "sticky" : "hidden"
         } lg:w-[300px] lg:block sticky top-[84px] z-40 bg-white rounded-2xl h-fit border border-gray-100 p-4 shadow-sm mt-3`}
       >
-        {/* Header */}
+        
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2 text-gray-800 font-semibold text-sm">
             <Users className="w-4 h-4 text-blue-600" />
@@ -75,7 +70,7 @@ export default function Suggested() {
           </span>
         </div>
 
-        {/* Search */}
+        
         <div className="relative mb-3">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
             <Search className="w-3.5 h-3.5" />
@@ -90,65 +85,56 @@ export default function Suggested() {
           />
         </div>
 
-        {/* List */}
+        
         <div className="space-y-2.5">
-          {suggestions
-            .slice(0, search ? suggestions.length : 5)
-            .map((user) => (
-              <div
-                key={user._id}
-                className="p-2.5 border border-gray-100 rounded-xl hover:border-gray-200 transition-all bg-white"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5 overflow-hidden">
+          {suggestions.slice(0, 5).map((user) => (
+            <div
+              key={user._id}
+              className="p-2.5 border border-gray-100 rounded-xl hover:border-gray-200 transition-all bg-white"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5 overflow-hidden">
+                  <Link to={`/profile/${user._id}`}>
+                    <img
+                      src={user.photo}
+                      alt={user.name}
+                      className="w-9 h-9 rounded-full object-cover flex-shrink-0"
+                    />
+                  </Link>
+
+                  <div className="min-w-0">
                     <Link to={`/profile/${user._id}`}>
-                      <img
-                        src={user.photo}
-                        alt={user.name}
-                        className="w-9 h-9 rounded-full object-cover flex-shrink-0"
-                      />
+                      <h4 className="text-xs font-semibold text-gray-900 truncate">
+                        {user.name}
+                      </h4>
                     </Link>
 
-                    <div className="min-w-0">
-                      <Link to={`/profile/${user._id}`}>
-                        <h4 className="text-xs font-semibold text-gray-900 truncate">
-                          {user.name}
-                        </h4>
-                      </Link>
-
-                      <Link to={`/profile/${user._id}`}>
-                        <p className="text-[11px] text-gray-400 truncate">
-                          @{user.username}
-                        </p>
-                      </Link>
-                    </div>
+                    <Link to={`/profile/${user._id}`}>
+                      <p className="text-[11px] text-gray-400 truncate">
+                        @{user.username}
+                      </p>
+                    </Link>
                   </div>
-
-                  <Follow
-                    userID={user._id}
-                    refetch={refetch}
-                    setProfile={setProfile}
-                    profile={profile}
-                  />
                 </div>
 
-                <div className="mt-2 hidden lg:flex items-center gap-1.5 text-[10px] text-gray-500 font-medium">
-                  <span className="bg-gray-50 px-2 py-0.5 rounded-md border border-gray-100">
-                    {user.followersCount || 0} followers
-                  </span>
-                </div>
+                <Follow
+                  userID={user._id}
+                  refetch={refetch}
+                  setProfile={setProfile}
+                  profile={profile}
+                />
               </div>
-            ))}
+
+              <div className="mt-2 hidden lg:flex items-center gap-1.5 text-[10px] text-gray-500 font-medium">
+                <span className="bg-gray-50 px-2 py-0.5 rounded-md border border-gray-100">
+                  {user.followersCount || 0} followers
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* No Results */}
-        {search && suggestions.length === 0 && (
-          <p className="py-4 text-center text-xs text-gray-400">
-            No users found
-          </p>
-        )}
-
-        {/* View More */}
+        
         <div className="mt-3 pt-2 border-t border-gray-50">
           <Link
             to="/suggestions"

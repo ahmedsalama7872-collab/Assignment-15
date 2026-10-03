@@ -125,7 +125,7 @@ const postMutation = useMutation({
           rows={4}
         />
 
-        {/* Image Preview */}
+        
         {imagePreview && (
           <div className="relative mt-4 overflow-hidden rounded-xl border border-slate-200">
             <img

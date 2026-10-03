@@ -40,7 +40,7 @@ export default function Login() {
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-8 flex max-w-md flex-col gap-4">
-        {/* Email */}
+        
         <div className="relative">
           <User className="pointer-events-none  absolute left-3 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-slate-400" />
 
@@ -54,7 +54,7 @@ export default function Login() {
           />
         </div>
 
-        {/* Password */}
+        
         <div className="relative">
           <Key className="pointer-events-none absolute left-3 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-slate-400" />
 

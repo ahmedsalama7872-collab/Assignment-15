@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import NewPost from "../components/NewPost";
 import PostCard from "../components/PostCard/PostCard.jsx";
 import axios from "axios";
@@ -7,47 +7,53 @@ import { useQuery } from "@tanstack/react-query";
 import { ClipLoader } from "react-spinners";
 
 export default function Feed() {
-  const { link, setLink } = useOutletContext();
-const [isPosting, setIsPosting] = useState(false);
+  const { link, setLink, page, setPage } = useOutletContext();
+
+  const [isPosting, setIsPosting] = useState(false);
+  const [allPosts, setAllPosts] = useState([]);
+
+  const lastPostRef = useRef(null);
+
   async function getPosts() {
-    if (!link) return [];
+  if (!link) return [];
 
-    try {
-      const { data } = await axios.get(link, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-        },
-      });
+  try {
+    const url = link.includes("/users/bookmarks")
+      ? `${link}?page=${page}&limit=40`
+      : `${link}&page=${page}&limit=40`;
 
-      console.log("API Data:", data);
+    const { data } = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+      },
+    });
 
-      const allPosts =
-        data.data?.bookmarks ||
-        data.posts ||
-        data.data?.posts ||
-        [];
+    console.log("API Data:", data);
 
-      if (allPosts.length > 0) {
-        console.log("Full First Post Object:", allPosts[0]);
-      }
+    const allPosts =
+      data.data?.bookmarks ||
+      data.posts ||
+      data.data?.posts ||
+      [];
 
-      return allPosts;
-    } catch (error) {
-      console.log(
-        "Error:",
-        error.response?.data || error.message
-      );
+    return allPosts;
+  } catch (error) {
+    console.log(
+      "Error:",
+      error.response?.data || error.message
+    );
 
-      throw error;
-    }
+    throw error;
   }
+}
 
   const {
     data: posts = [],
     isLoading,
-    isError,refetch
+    isError,
+    refetch,
   } = useQuery({
-    queryKey: ["feed", link],
+    queryKey: ["feed", link, page],
     queryFn: getPosts,
     enabled: !!link,
 
@@ -58,12 +64,52 @@ const [isPosting, setIsPosting] = useState(false);
     refetchOnWindowFocus: false,
   });
 
+  useEffect(() => {
+    setPage(1);
+    setAllPosts([]);
+  }, [link]);
+
+  useEffect(() => {
+    if (posts.length > 0) {
+      setAllPosts((oldPosts) => {
+        const newPosts = posts.filter(
+          (post) =>
+            !oldPosts.some(
+              (oldPost) => oldPost._id === post._id
+            )
+        );
+
+        return [...oldPosts, ...newPosts];
+      });
+    }
+  }, [posts]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (
+        entries[0].isIntersecting &&
+        posts.length === 40
+      ) {
+        setPage((prev) => prev + 1);
+      }
+    });
+
+    if (lastPostRef.current) {
+      observer.observe(lastPostRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [posts]);
+
   return (
     <div>
-      <NewPost refetch={refetch} setIsPosting={setIsPosting}/>
+      <NewPost
+        refetch={refetch}
+        setIsPosting={setIsPosting}
+      />
 
       <div className="space-y-6 mt-4">
-        {isLoading ? (
+        {isLoading && allPosts.length === 0 ? (
           <p className="text-center mt-4 text-slate-500">
             جاري تحميل المنشورات...
           </p>
@@ -71,25 +117,30 @@ const [isPosting, setIsPosting] = useState(false);
           <p className="text-center mt-4 text-red-500">
             حدث خطأ أثناء تحميل المنشورات
           </p>
-        ) : isPosting? (
-<div className="text-center mt-40">
+        ) : isPosting ? (
+          <div className="text-center mt-40">
+            <ClipLoader color="#36d7b7" />
+          </div>
+        ) : allPosts.length > 0 ? (
+          <>
+            {allPosts.map((post) => (
+              <PostCard
+                refetch={refetch}
+                link={link}
+                setLink={setLink}
+                key={post._id || post.id}
+                post={post}
+              />
+            ))}
 
-<ClipLoader color="#36d7b7" className="" />
-</div>
-        )
-        
-        
-        :posts.length > 0 ? (
-          posts.map((post) => (
-            <PostCard
-            refetch={refetch}
-              link={link}
-              setLink={setLink}
-              key={post._id || post.id}
-              post={post}
-            />
-            
-          ))
+            <div ref={lastPostRef}></div>
+
+            {isLoading && (
+              <div className="text-center py-6">
+                <ClipLoader color="#36d7b7" />
+              </div>
+            )}
+          </>
         ) : (
           <p className="text-center mt-4 text-slate-500">
             لا توجد منشورات لعرضها
