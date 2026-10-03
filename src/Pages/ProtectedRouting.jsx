@@ -1,10 +1,10 @@
 import React from "react";
-import Auth from "./Auth";
+import { Navigate, Outlet } from "react-router-dom";
 
-export default function ProtectedRouting({ children }) {
+export default function ProtectedRouting() {
   if (localStorage.getItem("userToken")) {
-    return children;
-  } else {
-    return <Auth />;
+    return <Outlet />;
   }
+
+  return <Navigate to="/" replace />;
 }

@@ -10,10 +10,15 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import PostPreview from "./components/PostPreview";
 import Settings from "./Pages/Settings";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Suggestions from "./Pages/Suggestions";
 import ProtectedRouting from "./Pages/ProtectedRouting";
+
+import {
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
+
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const client = new QueryClient();
 
@@ -34,76 +39,53 @@ const routes = createHashRouter([
   },
 
   {
-    path: "/app",
-    element: (
-      <ProtectedRouting>
-        <Layout />
-      </ProtectedRouting>
-    ),
+    element: <ProtectedRouting />,
     children: [
       {
-        index: true,
-        element: <Feed />,
+        path: "/app",
+        element: <Layout />,
+        children: [
+          {
+            index: true,
+            element: <Feed />,
+          },
+          {
+            path: "feed",
+            element: <Feed />,
+          },
+        ],
       },
+
       {
-        path: "feed",
-        element: <Feed />,
+        path: "/PostPreview/:id",
+        element: <PostPreview />,
+      },
+
+      {
+        path: "/profile",
+        element: <Profile />,
+      },
+
+      {
+        path: "/profile/:id",
+        element: <Profile />,
+      },
+
+      {
+        path: "/suggestions",
+        element: <Suggestions />,
+      },
+
+      {
+        path: "/settings",
+        element: <Settings />,
+      },
+
+      {
+        path: "/notifications",
+        element: <Notifications />,
       },
     ],
-  },
-
-  {
-    path: "/PostPreview/:id",
-    element: (
-      <ProtectedRouting>
-        <PostPreview />
-      </ProtectedRouting>
-    ),
-  },
-
-  {
-    path: "/profile",
-    element: (
-      <ProtectedRouting>
-        <Profile />
-      </ProtectedRouting>
-    ),
-  },
-
-  {
-    path: "/suggestions",
-    element: (
-      <ProtectedRouting>
-        <Suggestions />
-      </ProtectedRouting>
-    ),
-  },
-
-  {
-    path: "/settings",
-    element: (
-      <ProtectedRouting>
-        <Settings />
-      </ProtectedRouting>
-    ),
-  },
-
-  {
-    path: "/profile/:id",
-    element: (
-      <ProtectedRouting>
-        <Profile />
-      </ProtectedRouting>
-    ),
-  },
-
-  {
-    path: "/notifications",
-    element: (
-      <ProtectedRouting>
-        <Notifications />
-      </ProtectedRouting>
-    ),
   },
 ]);
 
@@ -111,6 +93,7 @@ export default function App() {
   return (
     <QueryClientProvider client={client}>
       <RouterProvider router={routes} />
+
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
