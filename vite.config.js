@@ -7,6 +7,8 @@ import path from "path";
 export default defineConfig({
   plugins: [react(), tailwindcss(), flowbiteReact()],
 
+  base: "/Assignment-15/",
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
